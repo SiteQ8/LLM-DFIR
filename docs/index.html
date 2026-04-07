@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM-DFIR — Forensics for the LLM Era</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='85'>🔍</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a14;--p1:#0d0d18;--p2:#13131e;--p3:#1a1a28;--bd:#1e1e36;--bd2:#2a2a48;
+--green:#00ff88;--cyan:#00d4ff;--red:#ff3366;--amber:#ffaa00;--purple:#aa66ff;--pink:#ff66cc;
+--tx:#e0e0f5;--t2:#7080a8;--t3:#404868;
+--f:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--p1)}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+.app{max-width:1200px;margin:0 auto;padding:16px}
+
+.hero{text-align:center;padding:42px 20px 28px;position:relative}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(170,102,255,.06) 0%,transparent 60%);pointer-events:none}
+.tag{display:inline-flex;gap:6px;padding:5px 14px;border-radius:20px;background:rgba(170,102,255,.1);border:1px solid rgba(170,102,255,.25);font-size:.62rem;color:var(--purple);font-family:var(--mono);margin-bottom:14px;font-weight:600;letter-spacing:.5px}
+.hero h1{font-size:2.4rem;font-weight:900;letter-spacing:-1px;line-height:1.05;margin-bottom:10px;position:relative}
+.hero h1 .p{color:var(--purple)}.hero h1 .g{color:var(--green)}.hero h1 .c{color:var(--cyan)}
+.hero-sub{font-size:.86rem;color:var(--t2);max-width:680px;margin:0 auto 18px;line-height:1.7;position:relative}
+.hero-author{display:inline-flex;gap:8px;padding:6px 16px;border-radius:10px;background:var(--p2);border:1px solid var(--bd);font-size:.7rem;color:var(--t2);position:relative}
+.hero-author strong{color:var(--tx)}
+
+.tabs{display:flex;gap:2px;background:var(--p1);border-radius:14px;padding:4px;border:1px solid var(--bd);margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{padding:11px 18px;border-radius:10px;font-size:.7rem;font-weight:600;color:var(--t3);cursor:pointer;white-space:nowrap;transition:all .15s;font-family:var(--f)}
+.tab:hover{color:var(--tx)}
+.tab.on{background:linear-gradient(135deg,var(--purple),var(--cyan));color:#000;font-weight:700;box-shadow:0 4px 16px rgba(170,102,255,.25)}
+
+.card{background:var(--p1);border-radius:14px;padding:20px;border:1px solid var(--bd);margin-bottom:14px;position:relative}
+.card-title{font-size:.92rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{font-size:.5rem;padding:3px 9px;border-radius:5px;font-weight:700;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px}
+.bg{background:rgba(0,255,136,.12);color:var(--green);border:1px solid rgba(0,255,136,.2)}
+.br{background:rgba(255,51,102,.12);color:var(--red);border:1px solid rgba(255,51,102,.2)}
+.bc{background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
+.ba{background:rgba(255,170,0,.12);color:var(--amber);border:1px solid rgba(255,170,0,.2)}
+.bp{background:rgba(170,102,255,.12);color:var(--purple);border:1px solid rgba(170,102,255,.2)}
+
+.terminal{background:#000;border-radius:10px;padding:14px;font-family:var(--mono);font-size:.66rem;line-height:1.85;border:1px solid var(--bd);overflow-x:auto;max-height:440px;overflow-y:auto;white-space:pre-wrap}
+.t-pr{color:var(--green)}.t-cm{color:var(--cyan)}.t-ot{color:var(--t2)}.t-er{color:var(--red)}.t-wr{color:var(--amber)}.t-in{color:var(--purple)}.t-cr{color:var(--pink)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--p1);border-radius:12px;padding:16px;border:1px solid var(--bd);text-align:center;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--cyan))}
+.stat-v{font-size:1.7rem;font-weight:900;font-family:var(--mono)}
+.stat-l{font-size:.55rem;color:var(--t3);margin-top:4px;text-transform:uppercase;letter-spacing:.6px}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+.artifact{background:var(--p2);border-radius:10px;padding:14px;border:1px solid var(--bd);margin-bottom:6px;transition:all .12s}
+.artifact:hover{border-color:var(--bd2);transform:translateY(-1px)}
+.art-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.art-n{font-size:.82rem;font-weight:700;color:var(--purple);font-family:var(--mono)}
+.art-c{font-size:.55rem;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+.art-d{font-size:.66rem;color:var(--t2);line-height:1.6;margin-bottom:8px}
+.art-paths{background:#000;border-radius:6px;padding:8px;font-family:var(--mono);font-size:.58rem;color:var(--t2)}
+.art-paths div{padding:2px 0;word-break:break-all}
+.art-paths .os{color:var(--cyan);font-weight:700;display:inline-block;width:60px}
+.art-val{font-size:.62rem;color:var(--green);margin-top:8px;padding:6px 8px;background:rgba(0,255,136,.05);border-radius:6px;border:1px solid rgba(0,255,136,.15);line-height:1.5}
+
+.demo-input{width:100%;padding:11px 14px;border-radius:10px;background:var(--p2);border:1px solid var(--bd);color:var(--tx);font-family:var(--mono);font-size:.78rem;margin-bottom:8px}
+.demo-input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 20px rgba(170,102,255,.15)}
+.btn{padding:9px 22px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--cyan));color:#000;border:none;font-size:.76rem;font-weight:700;cursor:pointer;font-family:var(--f);transition:all .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(170,102,255,.3)}
+.btn.r{background:var(--red);color:#fff}.btn.s{background:var(--p2);color:var(--tx);border:1px solid var(--bd)}
+
+.playbook{background:var(--p1);border-radius:14px;padding:20px;border:1px solid var(--bd);margin-bottom:14px;border-left:4px solid var(--red)}
+.playbook.amber{border-left-color:var(--amber)}.playbook.cyan{border-left-color:var(--cyan)}
+.pb-title{font-size:1rem;font-weight:800;margin-bottom:10px}
+.pb-section{margin-bottom:12px}
+.pb-section-t{font-size:.65rem;color:var(--purple);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.pb-list{font-size:.72rem;color:var(--t2);line-height:1.8;padding-left:14px}
+.pb-list li{margin-bottom:4px}
+
+.gap-row{display:grid;grid-template-columns:1fr 2fr;gap:14px;padding:12px;background:var(--p2);border-radius:10px;border:1px solid var(--bd);margin-bottom:6px}
+.gap-name{font-size:.78rem;font-weight:700;color:var(--red)}
+.gap-detail{font-size:.66rem;color:var(--t2);line-height:1.6}
+
+@media(max-width:768px){.stats{grid-template-columns:1fr 1fr}.g2,.g3,.g4{grid-template-columns:1fr}.gap-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="hero">
+<div class="tag">🔍 SANS DFIR Summit 2026 — Forensics Track</div>
+<h1><span class="p">LLM-DFIR</span><br><span class="g">Forensics</span> for the <span class="c">LLM Era</span></h1>
+<p class="hero-sub">A reference taxonomy of LLM-era artifacts. A working triage script.<br>Incident response playbooks for prompt injection, data leakage, and AI supply-chain compromise.</p>
+<div class="hero-author">👤 <strong>Ali AlEnezi</strong> · Security Architecture Principal · NBK Group 🇰🇼 · <a href="https://github.com/SiteQ8" target="_blank" style="color:var(--purple)">@SiteQ8</a></div>
+</div>
+
+<div class="tabs">
+<div class="tab on" onclick="sT(this,'o')">📊 Overview</div>
+<div class="tab" onclick="sT(this,'a')">🗃️ Artifact Taxonomy</div>
+<div class="tab" onclick="sT(this,'t')">🔧 Triage Script</div>
+<div class="tab" onclick="sT(this,'p')">📋 Playbooks</div>
+<div class="tab" onclick="sT(this,'g')">⚠️ Detection Gaps</div>
+<div class="tab" onclick="sT(this,'b')">📡 Logging Baseline</div>
+</div>
+
+<div id="c"></div>
+</div>
+
+<script>
+var P='o';
+function sT(e,t){P=t;document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});e.classList.add('on');R()}
+function R(){var c=document.getElementById('c');({o:rO,a:rA,t:rT,p:rP,g:rG,b:rB})[P]()}
+
+// ═══ OVERVIEW ═══
+function rO(){var c=document.getElementById('c');
+c.innerHTML='<div class="stats"><div class="stat"><div class="stat-v" style="color:var(--purple)">15</div><div class="stat-l">Artifact Types</div></div><div class="stat"><div class="stat-v" style="color:var(--cyan)">3</div><div class="stat-l">OS Platforms</div></div><div class="stat"><div class="stat-v" style="color:var(--green)">8</div><div class="stat-l">Categories</div></div><div class="stat"><div class="stat-v" style="color:var(--red)">3</div><div class="stat-l">Playbooks</div></div></div>';
+
+c.innerHTML+='<div class="g2"><div class="card"><div class="card-title">🎯 The Problem <span class="badge br">Why This Matters</span></div><div style="font-size:.78rem;color:var(--t2);line-height:1.8">LLM-based tools — Copilot, Cursor, Claude Code, MCP servers, browser AI assistants — leave forensic traces that <span style="color:var(--red)">most DFIR investigators don\'t know how to find</span>.<br><br>When an incident happens (prompt injection, data leakage, supply-chain compromise), responders search for traditional artifacts: process lists, network logs, file modifications. They miss:<br><br>• <span style="color:var(--purple)">MCP transcripts</span> showing every tool call an AI agent made<br>• <span style="color:var(--purple)">IDE plugin SQLite databases</span> containing chat history<br>• <span style="color:var(--purple)">Vector DB query logs</span> revealing what was indexed for RAG<br>• <span style="color:var(--purple)">Embedding caches</span> with the actual prompts<br><br>By the time SOC notices, the attacker has moved on.</div></div><div class="card"><div class="card-title">🔍 The Solution <span class="badge bg">What This Repo Does</span></div><div style="font-size:.78rem;color:var(--t2);line-height:1.8"><span style="color:var(--green)">1. Reference taxonomy</span> — 15 artifact types across Windows/macOS/Linux with file paths, parsing tips, and evidence value<br><br><span style="color:var(--green)">2. Working triage script</span> — Python tool that collects all LLM artifacts from an endpoint into JSON timeline + CSV inventory + HTML report<br><br><span style="color:var(--green)">3. Three IR playbooks</span> for the most common LLM incidents: prompt injection, data leakage, supply-chain compromise<br><br><span style="color:var(--green)">4. Detection gap analysis</span> — what EDR/SIEM misses today and why<br><br><span style="color:var(--green)">5. Minimal logging baseline</span> — what every org should enable starting Monday morning</div></div></div>';
+
+var sections=[
+{i:'🗃️',t:'15 Artifact Types',d:'IDE plugins (Copilot, Cursor, Claude Code, Codeium), MCP servers, browser AI residue, API clients, vector DBs, embedding caches, agent frameworks, local LLMs, shell history',c:'var(--purple)'},
+{i:'🐍',t:'Python Triage Script',d:'685 lines, no dependencies. Walks artifact paths, hashes files, scans content for IOCs (API keys, prompt injection patterns, data exfil indicators), generates timeline.json + evidence_inventory.csv + HTML report',c:'var(--green)'},
+{i:'📋',t:'3 IR Playbooks',d:'Prompt injection (direct + indirect), sensitive data leakage to third-party models, supply-chain compromise via AI-generated code. Each with indicators, triage steps, containment actions, future detection',c:'var(--amber)'},
+{i:'⚠️',t:'Detection Gaps',d:'7 specific things current EDR/SIEM products do not capture from LLM tooling, with reasoning and the corresponding logging baseline to fix the gap',c:'var(--red)'},
+{i:'📡',t:'Logging Baseline',d:'Minimum viable logging configuration every org should enable now: network endpoints, process names, file watch paths, DNS patterns, command-line indicators',c:'var(--cyan)'},
+{i:'🌐',t:'Cross-Platform',d:'Tested on Windows 10/11, macOS Sonoma+, Linux (Ubuntu/Debian/RHEL). Auto-detects OS and walks the appropriate paths. Single Python script, no installation',c:'var(--cyan)'}
+];
+c.innerHTML+='<div class="g3">'+sections.map(function(s){return '<div class="card" style="border-color:'+s.c+'40"><div style="font-size:1.5rem;margin-bottom:6px">'+s.i+'</div><div style="font-size:.78rem;font-weight:700;color:'+s.c+';margin-bottom:6px">'+s.t+'</div><div style="font-size:.62rem;color:var(--t2);line-height:1.6">'+s.d+'</div></div>'}).join('')+'</div>'}
+
+// ═══ ARTIFACT TAXONOMY ═══
+function rA(){var c=document.getElementById('c');
+var artifacts=[
+{n:'GitHub Copilot',cat:'IDE Plugin',c:'var(--purple)',paths:[
+['Win','%APPDATA%\\Code\\User\\globalStorage\\github.copilot'],
+['Win','%APPDATA%\\Code\\User\\globalStorage\\github.copilot-chat'],
+['Win','%APPDATA%\\Code\\logs\\*\\exthost*\\GitHub.copilot*'],
+['mac','~/Library/Application Support/Code/User/globalStorage/github.copilot'],
+['lin','~/.config/Code/User/globalStorage/github.copilot']],
+val:'state.vscdb (SQLite) contains chat history, file context sent to model, suggestion logs. Query: SELECT key,value FROM ItemTable WHERE key LIKE "%copilot%"'},
+{n:'Cursor',cat:'IDE Plugin',c:'var(--purple)',paths:[
+['Win','%APPDATA%\\Cursor\\User\\globalStorage'],
+['Win','%APPDATA%\\Cursor\\User\\workspaceStorage'],
+['mac','~/Library/Application Support/Cursor/User/globalStorage'],
+['lin','~/.config/Cursor/User/globalStorage']],
+val:'Per-workspace state.vscdb files contain chat history, indexed codebase metadata. Multiple databases per workspace hash.'},
+{n:'Claude Code',cat:'IDE Plugin',c:'var(--purple)',paths:[
+['Win','%USERPROFILE%\\.claude'],
+['mac','~/.claude'],
+['mac','~/Library/Logs/Claude'],
+['lin','~/.claude']],
+val:'JSONL session files — every tool invocation, file edit, bash command. Append-only, perfect for timeline reconstruction.'},
+{n:'MCP Server Config',cat:'MCP',c:'var(--red)',paths:[
+['Win','%APPDATA%\\Claude\\claude_desktop_config.json'],
+['mac','~/Library/Application Support/Claude/claude_desktop_config.json'],
+['lin','~/.config/Claude/claude_desktop_config.json']],
+val:'⚠️ FIRST FILE TO GRAB. Declares which MCP servers are active and what they can access. Red flags: filesystem servers on /, hardcoded API tokens in env, untrusted command paths.'},
+{n:'MCP Server Logs',cat:'MCP',c:'var(--red)',paths:[
+['Win','%APPDATA%\\Claude\\logs\\mcp-server-*.log'],
+['mac','~/Library/Logs/Claude/mcp-server-*.log'],
+['lin','~/.config/Claude/logs/mcp-server-*.log']],
+val:'JSON-RPC traffic between client and MCP server. Every tools/list and tools/call request. Grep for "method":"tools/call" to enumerate every action the agent took.'},
+{n:'Chrome AI Storage',cat:'Browser AI',c:'var(--cyan)',paths:[
+['Win','%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Local Storage\\leveldb'],
+['mac','~/Library/Application Support/Google/Chrome/Default/Local Storage/leveldb'],
+['lin','~/.config/google-chrome/Default/Local Storage/leveldb']],
+val:'LevelDB stores chat.openai.com, claude.ai, gemini.google.com session data — conversation IDs, cached message content, sometimes auth tokens. Use ccl_chromium_reader to parse.'},
+{n:'OpenAI SDK Cache',cat:'API Client',c:'var(--amber)',paths:[
+['Win','%USERPROFILE%\\.openai'],
+['mac','~/.openai, ~/Library/Caches/openai'],
+['lin','~/.openai, ~/.cache/openai']],
+val:'API keys in config, request/response cache. Always check shell history (.bash_history, .zsh_history, ConsoleHost_history.txt) for OPENAI_API_KEY= patterns.'},
+{n:'Anthropic SDK',cat:'API Client',c:'var(--amber)',paths:[
+['Win','%USERPROFILE%\\.anthropic'],
+['mac','~/.anthropic, ~/Library/Caches/anthropic'],
+['lin','~/.anthropic, ~/.cache/anthropic']],
+val:'Cached prompts/responses, API key storage. Same triage approach as OpenAI.'},
+{n:'ChromaDB',cat:'Vector DB',c:'var(--green)',paths:[
+['Win','%USERPROFILE%\\.chroma'],
+['mac','~/.chroma, ~/chroma'],
+['lin','~/.chroma, /var/lib/chroma']],
+val:'chroma.sqlite3 contains indexed documents (often the entire codebase!). Query: SELECT collection_id,document FROM embeddings_queue. Reveals what was sent for RAG.'},
+{n:'FAISS Index',cat:'Vector DB',c:'var(--green)',paths:[
+['Win','%USERPROFILE%\\.cache\\faiss'],
+['mac','~/.cache/faiss'],
+['lin','~/.cache/faiss, /tmp/faiss*']],
+val:'Binary index files paired with .pkl metadata containing original document text. Local semantic search caches.'},
+{n:'HuggingFace Cache',cat:'Model Cache',c:'var(--green)',paths:[
+['All','~/.cache/huggingface']],
+val:'Downloaded model weights, tokenizers, datasets. Look for models--* directories. Reveals which models the user has run locally.'},
+{n:'LangChain',cat:'Agent Framework',c:'var(--pink)',paths:[
+['All','~/.cache/langchain, /tmp/langchain*']],
+val:'.db files contain LangSmith trace cache. .pkl files have serialized agent state with full chain execution history.'},
+{n:'Ollama',cat:'Local LLM',c:'var(--pink)',paths:[
+['Win','%USERPROFILE%\\.ollama'],
+['mac','~/.ollama, ~/Library/Application Support/Ollama'],
+['lin','~/.ollama, /usr/share/ollama']],
+val:'CRITICAL for offline LLM forensics — cloud telemetry won\'t see local model usage. Check ~/.ollama/logs/server.log for every prompt with timestamps.'},
+{n:'Codeium / Windsurf',cat:'IDE Plugin',c:'var(--purple)',paths:[
+['Win','%USERPROFILE%\\.codeium, %APPDATA%\\Windsurf'],
+['mac','~/.codeium, ~/Library/Application Support/Windsurf'],
+['lin','~/.codeium, ~/.config/Windsurf']],
+val:'language_server logs contain code completions, indexed repos, telemetry payloads.'},
+{n:'Shell History',cat:'Shell History',c:'var(--cyan)',paths:[
+['Win','%APPDATA%\\Microsoft\\Windows\\PowerShell\\PSReadLine\\ConsoleHost_history.txt'],
+['mac','~/.bash_history, ~/.zsh_history'],
+['lin','~/.bash_history, ~/.zsh_history']],
+val:'Grep for: openai, anthropic, claude, ollama, OPENAI_API_KEY, ANTHROPIC_API_KEY, api.openai.com, npx @modelcontextprotocol, litellm, langchain'}
+];
+c.innerHTML='<div class="card"><div class="card-title">🗃️ Reference Taxonomy <span class="badge bp">15 Artifact Types</span> <span class="badge bg">3 OS</span></div><div style="font-size:.7rem;color:var(--t2);margin-bottom:6px">Each artifact lists: where it lives on Windows/macOS/Linux, files of interest, parsing tips, and evidence value.</div></div>';
+c.innerHTML+=artifacts.map(function(a){return '<div class="artifact"><div class="art-h"><div class="art-n" style="color:'+a.c+'">'+a.n+'</div><div class="art-c">'+a.cat+'</div></div><div class="art-paths">'+a.paths.map(function(p){return '<div><span class="os">'+p[0]+'</span> '+p[1]+'</div>'}).join('')+'</div><div class="art-val">💡 '+a.val+'</div></div>'}).join('')}
+
+// ═══ TRIAGE SCRIPT ═══
+function rT(){var c=document.getElementById('c');
+c.innerHTML='<div class="card"><div class="card-title">🔧 LLM-DFIR Triage Script <span class="badge bg">685 lines · Python · No deps</span></div><div style="font-size:.74rem;color:var(--t2);line-height:1.7;margin-bottom:12px">A working open-source triage tool that walks 15 artifact paths across Windows/macOS/Linux, hashes files, scans content for IOCs (API keys, prompt injection patterns, data exfil indicators), and produces timeline-ready output.</div><div class="terminal"><span class="t-pr">$</span> <span class="t-cm">git clone https://github.com/SiteQ8/LLM-DFIR.git</span>\n<span class="t-pr">$</span> <span class="t-cm">cd LLM-DFIR</span>\n<span class="t-pr">$</span> <span class="t-cm">python3 scripts/llm_triage.py --output ./evidence</span>\n\n<span class="t-in">╔═══════════════════════════════════════════════════════════╗\n║  LLM-DFIR Triage Tool v1.0                                ║\n║  Forensic collection for LLM-era artifacts                ║\n║  Ali AlEnezi (@SiteQ8) — NBK Group                        ║\n╚═══════════════════════════════════════════════════════════╝</span>\n\n<span class="t-pr">[+]</span> Detected OS: macos\n<span class="t-pr">[+]</span> User: investigator\n<span class="t-pr">[+]</span> Hostname: forensics-workstation\n<span class="t-pr">[+]</span> Output: ./evidence\n\n<span class="t-pr">[+]</span> Scanning 15 artifact categories...\n\n  [<span class="t-in">IDE Plugin</span>]    /Users/victim/Library/Application Support/Code/User/globalStorage/github.copilot/state.vscdb\n  [<span class="t-in">IDE Plugin</span>]    /Users/victim/.claude/sessions/session_2026-04-07.jsonl\n  [<span class="t-in">MCP</span>]           /Users/victim/Library/Application Support/Claude/claude_desktop_config.json\n      <span class="t-er">[!] OpenAI API Key found (3x)</span>\n  [<span class="t-in">MCP</span>]           /Users/victim/Library/Logs/Claude/mcp-server-filesystem.log\n  [<span class="t-in">MCP</span>]           /Users/victim/Library/Logs/Claude/mcp-server-github.log\n      <span class="t-er">[!] Sensitive keyword in prompt (12x)</span>\n  [<span class="t-in">Browser AI</span>]    /Users/victim/Library/Application Support/Google/Chrome/Default/Local Storage/leveldb/000003.log\n  [<span class="t-in">Vector DB</span>]     /Users/victim/.chroma/chroma.sqlite3\n  [<span class="t-in">API Client</span>]    /Users/victim/.anthropic/cache.json\n  [<span class="t-in">Local LLM</span>]     /Users/victim/.ollama/logs/server.log\n      <span class="t-wr">[!] Private key in prompt (1x)</span>\n  [<span class="t-in">Shell</span>]         /Users/victim/.zsh_history\n      <span class="t-er">[!] OpenAI API Key found (1x)</span>\n\n<span class="t-pr">[+]</span> Collection complete:\n    Files found: 47\n    Timeline entries: 47\n    IOCs detected: 8\n\n<span class="t-pr">[+]</span> Outputs saved:\n    ./evidence/timeline.json\n    ./evidence/evidence_inventory.csv\n    ./evidence/iocs.json\n    ./evidence/report.html\n\n<span class="t-pr">[+]</span> Triage complete. 47 artifacts collected.\n<span class="t-pr">[+]</span> Open ./evidence/report.html in a browser to review.</div></div>';
+
+c.innerHTML+='<div class="g2"><div class="card"><div class="card-title">📂 Output Files</div><div style="font-size:.7rem;color:var(--t2);line-height:1.8"><strong style="color:var(--green)">timeline.json</strong> — Sorted by mtime descending. Each entry has timestamp, tool, category, file path, size. Import directly into Plaso/Timesketch.<br><br><strong style="color:var(--green)">evidence_inventory.csv</strong> — Full artifact inventory with SHA-256 hashes for chain of custody. Open in Excel.<br><br><strong style="color:var(--green)">iocs.json</strong> — Files containing detected IOCs: API keys, prompt injection patterns, data exfil indicators (private keys, SSN, CC patterns).<br><br><strong style="color:var(--green)">report.html</strong> — Standalone HTML report with stats, IOC summary, and 50 most recent timeline entries. Dark theme.</div></div><div class="card"><div class="card-title">🎯 IOC Detection</div><div style="font-size:.7rem;color:var(--t2);line-height:1.8">The triage script content-scans files under 5MB for:<br><br><strong style="color:var(--red)">API Keys:</strong> sk-*, sk-ant-*, AIza*, pcsk_*, hf_*<br><br><strong style="color:var(--red)">API Endpoints:</strong> api.openai.com, api.anthropic.com, *.openai.azure.com, generativelanguage.googleapis.com, api.cohere.ai, api.mistral.ai<br><br><strong style="color:var(--amber)">Prompt Injection:</strong> "ignore previous instructions", ChatML delimiters, jailbreak terms, code execution patterns<br><br><strong style="color:var(--amber)">Data Exfil:</strong> password/secret/token keywords, BEGIN PRIVATE KEY, SSN regex, credit card regex</div></div></div>';
+
+c.innerHTML+='<div class="card"><div class="card-title">⚙️ CLI Options</div><div class="terminal"><span class="t-cm">python3 llm_triage.py --help</span>\n\n  <span class="t-pr">--output PATH</span>      Output directory (default: ./triage_TIMESTAMP)\n  <span class="t-pr">--no-content</span>       Skip content scanning (faster, no IOC detection)\n  <span class="t-pr">--list-artifacts</span>   List all 15 artifact categories and exit</div></div>'}
+
+// ═══ PLAYBOOKS ═══
+function rP(){var c=document.getElementById('c');
+var pbs=[
+{n:'Playbook 1',t:'Prompt Injection / Indirect Prompt Injection',c:'',color:'var(--red)',
+indicators:['"ignore previous instructions" in MCP transcripts or API request bodies','ChatML delimiter injection (<|im_start|>system)','Hidden text in PDFs/web pages (white-on-white, 0pt font)','Unicode tag characters (U+E0000–U+E007F)','Sudden agent behavior change mid-session'],
+triage:['Snapshot claude_desktop_config.json — attackers may modify it','Snapshot active session files in ~/.claude/sessions','Snapshot all MCP server logs','Run llm_triage.py for full collection','Search artifacts for injection patterns','Determine MCP tool blast radius from logs','Check for lateral effects: file writes, command execution, API calls, code commits'],
+contain:['Disable affected MCP server in claude_desktop_config.json','Revoke API tokens that were in scope','Quarantine source document containing injection','Reset the agent session (kill running processes)']},
+{n:'Playbook 2',t:'Sensitive Data Leakage to Third-Party Models',c:'amber',color:'var(--amber)',
+indicators:['Outbound TLS to api.openai.com / api.anthropic.com','Large request bodies to LLM APIs','API keys in browser-cached chat history','Customer data in Copilot suggestion logs','BEGIN PRIVATE KEY strings in IDE plugin logs','SSN/credit card patterns in chat history'],
+triage:['Run llm_triage.py with content scanning (default)','Review iocs.json for API keys, private keys, PII patterns','Sort timeline by tool to attribute leakage','Parse browser leveldb for ChatGPT/Claude.ai cached conversations','Match artifact paths to user accounts','Cross-reference with SSO logs'],
+contain:['Rotate credentials found in leaked content','Notify legal/privacy team if PII or regulated data','Submit data deletion requests to model provider','Quarantine workstation if leakage was systematic','Force-rotate tokens in IDE plugin storage']},
+{n:'Playbook 3',t:'Supply-Chain Compromise via AI-Generated Code',c:'cyan',color:'var(--cyan)',
+indicators:['Recently added packages with low download count','Typosquatted package names ("slopsquatting")','New MCP server entries from untrusted npm packages','Outbound from build agents to suspicious hosts','Large commits authored from AI tools','Subtle obfuscation in AI-suggested files'],
+triage:['git log --grep="Generated by Copilot\\|Co-Authored-By: Claude"','Diff recent dependency changes (package.json, requirements.txt)','Verify each MCP server source: npm view <pkg> maintainers','Run static analysis (semgrep) on AI-generated code','Look for SQL injection, command injection, hardcoded secrets in suggestions'],
+contain:['Roll back dependency changes to pre-incident state','Rebuild from clean state (wipe node_modules, venvs)','Audit production deployments for bad versions','Rotate secrets accessible to build environment','Disable MCP servers from compromised sources','Notify downstream consumers if your code was published']}
+];
+c.innerHTML=pbs.map(function(pb){return '<div class="playbook '+pb.c+'"><div class="pb-title" style="color:'+pb.color+'"><span class="badge" style="background:'+pb.color+'20;color:'+pb.color+';margin-right:8px">'+pb.n+'</span>'+pb.t+'</div><div class="pb-section"><div class="pb-section-t">⚠️ Indicators</div><ul class="pb-list">'+pb.indicators.map(function(i){return '<li>'+i+'</li>'}).join('')+'</ul></div><div class="pb-section"><div class="pb-section-t">🔍 Triage Steps</div><ol class="pb-list">'+pb.triage.map(function(t){return '<li>'+t+'</li>'}).join('')+'</ol></div><div class="pb-section"><div class="pb-section-t">🛡️ Containment</div><ul class="pb-list">'+pb.contain.map(function(co){return '<li>'+co+'</li>'}).join('')+'</ul></div></div>'}).join('')}
+
+// ═══ DETECTION GAPS ═══
+function rG(){var c=document.getElementById('c');
+var gaps=[
+{n:'MCP Server JSON-RPC Traffic',d:'EDR products inspect TLS metadata but rarely log application-layer JSON-RPC traffic between Claude/Cursor and local MCP servers. The actual tool calls — what files were read, what commands were run — happen at this layer.'},
+{n:'IDE Plugin Telemetry',d:'No mainstream EDR captures Copilot suggestion logs, Cursor chat history databases, or Claude Code session files. These contain the actual prompts and code context sent to the model.'},
+{n:'LLM API Request Bodies',d:'TLS-inspecting proxies see api.openai.com connections but most don\'t decrypt and log the request body. The prompt content — including any sensitive data being leaked — is invisible.'},
+{n:'Vector DB Queries',d:'ChromaDB, FAISS, Qdrant, Pinecone — none of these have native EDR integration. Query history that reveals what documents were searched is only in app-level logs (often disabled by default).'},
+{n:'Embedding Cache Operations',d:'When a RAG pipeline ingests documents, it generates embeddings. The original text is often cached locally for retrieval. EDR file-write hooks may catch the file but not the semantic content.'},
+{n:'LLM Tool-Use Traces',d:'Agent frameworks (LangChain, LlamaIndex, AutoGen) maintain trace logs of every tool invocation. These are application logs, not OS events — invisible to file-based EDR.'},
+{n:'Local LLM Activity (Ollama)',d:'Ollama runs models entirely offline. There is NO outbound network traffic for cloud-based detection to catch. The only evidence is in ~/.ollama/logs/server.log — which most monitoring tools don\'t watch.'}
+];
+c.innerHTML='<div class="card"><div class="card-title">⚠️ What Current EDR/SIEM Misses <span class="badge br">7 Detection Gaps</span></div><div style="font-size:.74rem;color:var(--t2);line-height:1.7;margin-bottom:12px">Most EDR products were designed for traditional endpoint threats — process injection, ransomware, lateral movement. They were not designed to capture LLM-specific telemetry. Here\'s what they miss:</div></div>';
+c.innerHTML+=gaps.map(function(g){return '<div class="gap-row"><div class="gap-name">❌ '+g.n+'</div><div class="gap-detail">'+g.d+'</div></div>'}).join('')}
+
+// ═══ LOGGING BASELINE ═══
+function rB(){var c=document.getElementById('c');
+var base=[
+{n:'Network: LLM API Endpoints',d:'Log all TLS connections to: api.openai.com, api.anthropic.com, *.openai.azure.com, generativelanguage.googleapis.com, api.mistral.ai, api.cohere.ai, api.together.ai, api.replicate.com',c:'var(--red)'},
+{n:'Network: Inference Hosts',d:'Log connections to: huggingface.co (model downloads), replicate.com, together.ai, fireworks.ai, modal.com, banana.dev (any inference-as-a-service)',c:'var(--red)'},
+{n:'Process: LLM Tools',d:'Alert on process names: claude, cursor, ollama, copilot*, codeium*, windsurf*. Also alert on node/npx processes running @modelcontextprotocol/* packages.',c:'var(--amber)'},
+{n:'File: MCP Config Changes',d:'Watch for modifications to claude_desktop_config.json. Any change should trigger an alert — this file controls what tools an AI agent can access.',c:'var(--amber)'},
+{n:'File: AI Tool State Files',d:'Watch for creation of files in ~/.claude/, ~/.cursor/, ~/.codeium/, ~/.ollama/, ~/.openai/, ~/.anthropic/. Periodic snapshots for forensic baseline.',c:'var(--cyan)'},
+{n:'Process: Command Line Args',d:'Alert on command lines containing: --api-key, OPENAI_API_KEY=, ANTHROPIC_API_KEY=, npx @modelcontextprotocol, ollama run, langchain, litellm',c:'var(--cyan)'},
+{n:'DNS: AI Service Lookups',d:'Log DNS queries for: openai.com, anthropic.com, claude.ai, chatgpt.com, gemini.google.com, copilot.microsoft.com, perplexity.ai, mistral.ai, huggingface.co',c:'var(--green)'}
+];
+c.innerHTML='<div class="card"><div class="card-title">📡 Minimal Logging Baseline <span class="badge bg">Enable Now</span></div><div style="font-size:.74rem;color:var(--t2);line-height:1.7;margin-bottom:12px">If you do nothing else after this talk, enable these 7 logging controls. They provide 80% of the visibility needed for LLM-era incident response with minimal performance impact.</div></div>';
+c.innerHTML+=base.map(function(b,i){return '<div class="card" style="border-left:4px solid '+b.c+'"><div class="card-title" style="color:'+b.c+'"><span class="badge" style="background:'+b.c+'20;color:'+b.c+';margin-right:8px">#'+(i+1)+'</span>'+b.n+'</div><div style="font-size:.72rem;color:var(--t2);line-height:1.7">'+b.d+'</div></div>'}).join('');
+
+c.innerHTML+='<div class="card"><div class="card-title">🛠️ Implementation Snippets</div><div class="terminal"><span class="t-ot"># Sysmon config for MCP/Claude monitoring (Windows)</span>\n<span class="t-cm">&lt;FileCreate onmatch="include"&gt;\n  &lt;TargetFilename condition="contains"&gt;claude_desktop_config&lt;/TargetFilename&gt;\n  &lt;TargetFilename condition="contains"&gt;\\.claude\\&lt;/TargetFilename&gt;\n  &lt;TargetFilename condition="contains"&gt;\\.cursor\\&lt;/TargetFilename&gt;\n&lt;/FileCreate&gt;</span>\n\n<span class="t-ot"># auditd rules (Linux)</span>\n<span class="t-cm">-w /home/*/.claude/ -p wa -k llm_claude\n-w /home/*/.cursor/ -p wa -k llm_cursor\n-w /home/*/.config/Claude/claude_desktop_config.json -p wa -k llm_mcp_config\n-w /home/*/.ollama/ -p wa -k llm_ollama</span>\n\n<span class="t-ot"># macOS fseventsd (via osquery)</span>\n<span class="t-cm">SELECT * FROM file WHERE path LIKE \'/Users/%/Library/Application Support/Claude/%\';</span>\n\n<span class="t-ot"># Suricata rule for OpenAI API egress detection</span>\n<span class="t-cm">alert tls any any -&gt; any 443 (msg:"LLM API Egress - OpenAI"; tls.sni; content:"api.openai.com"; sid:1000001;)\nalert tls any any -&gt; any 443 (msg:"LLM API Egress - Anthropic"; tls.sni; content:"api.anthropic.com"; sid:1000002;)</span></div></div>'}
+
+R();
+</script>
+</body>
+</html>
