@@ -3,202 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LLM-DFIR — AI Forensics Collection Tool</title>
+<title>LLM-DFIR — AI Forensics Toolkit</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='85'>🔍</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0b0f17;
-  --bg2:#0f1420;
-  --panel:#141a28;
-  --panel2:#1a2236;
-  --border:#1f2940;
-  --border2:#2a3654;
-  --tx:#e4e8f0;
-  --tx2:#9ba8c0;
-  --tx3:#5b6b88;
-  --acc:#39d0a8;
-  --acc2:#2ba886;
-  --warn:#f5b342;
-  --crit:#ff5470;
-  --info:#5fa8ff;
-  --hi:#fff5b8;
-  --f:'Inter',system-ui,sans-serif;
-  --m:'JetBrains Mono',monospace;
-}
+:root{--bg:#0b0f17;--bg2:#0f1420;--panel:#141a28;--panel2:#1a2236;--border:#1f2940;--border2:#2a3654;--tx:#e4e8f0;--tx2:#9ba8c0;--tx3:#5b6b88;--acc:#39d0a8;--acc2:#2ba886;--warn:#f5b342;--crit:#ff5470;--info:#5fa8ff;--purple:#a88bff;--f:'Inter',system-ui,sans-serif;--m:'JetBrains Mono',monospace}
 html,body{height:100%}
-body{
-  font-family:var(--f);
-  background:var(--bg);
-  color:var(--tx);
-  font-size:13px;
-  line-height:1.5;
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:var(--bg2)}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:var(--tx3)}
 ::selection{background:var(--acc);color:var(--bg)}
 
-/* ═══ APP SHELL ═══ */
-.app{display:grid;grid-template-columns:240px 1fr;height:100vh;overflow:hidden}
+/* AUTH SCREEN */
+.auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;background-image:radial-gradient(circle at 20% 20%,rgba(57,208,168,.06) 0%,transparent 40%),radial-gradient(circle at 80% 80%,rgba(95,168,255,.05) 0%,transparent 40%)}
+.auth-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:36px 32px 28px;width:100%;max-width:420px;box-shadow:0 20px 80px rgba(0,0,0,.5)}
+.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.auth-brand-mark{width:44px;height:44px;background:linear-gradient(135deg,var(--acc),var(--info));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.auth-brand-name{font-weight:800;font-size:1.1rem;letter-spacing:-.3px}
+.auth-brand-sub{font-size:.62rem;color:var(--tx3);font-family:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:3px;margin-bottom:18px}
+.auth-tab{padding:9px;text-align:center;font-size:.72rem;font-weight:600;color:var(--tx3);cursor:pointer;border-radius:6px}
+.auth-tab:hover{color:var(--tx)}
+.auth-tab.on{background:var(--panel2);color:var(--acc)}
+.auth-field{margin-bottom:14px}
+.auth-label{display:block;font-size:.6rem;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:6px;font-weight:700}
+.auth-input{width:100%;padding:11px 13px;background:var(--bg2);border:1px solid var(--border2);border-radius:7px;color:var(--tx);font-family:var(--m);font-size:.78rem}
+.auth-input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(57,208,168,.12)}
+.auth-btn{width:100%;padding:12px;background:var(--acc);color:var(--bg);border:none;border-radius:7px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:var(--f);margin-top:6px}
+.auth-btn:hover{background:var(--acc2)}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:22px 0 18px;color:var(--tx3);font-size:.6rem;text-transform:uppercase;letter-spacing:1px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-demo-btn{width:100%;padding:12px;background:transparent;color:var(--purple);border:1px dashed var(--purple);border-radius:7px;font-size:.74rem;font-weight:700;cursor:pointer;font-family:var(--f);display:flex;align-items:center;justify-content:center;gap:8px}
+.auth-demo-btn:hover{background:rgba(168,139,255,.08)}
+.auth-error{padding:10px 12px;background:rgba(255,84,112,.08);border:1px solid rgba(255,84,112,.25);color:var(--crit);font-size:.68rem;border-radius:6px;margin-bottom:14px;display:none}
+.auth-error.show{display:block}
+.auth-footer{margin-top:24px;padding-top:18px;border-top:1px solid var(--border);text-align:center;font-size:.6rem;color:var(--tx3);line-height:1.7;font-family:var(--m)}
+.auth-footer a{color:var(--acc);text-decoration:none}
+.auth-footer strong{color:var(--tx2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px}
 
-/* ═══ SIDEBAR ═══ */
-.sidebar{
-  background:var(--bg2);
-  border-right:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
-  overflow-y:auto;
-}
-.brand{
-  padding:18px 18px 16px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.brand-mark{
-  width:32px;height:32px;
-  background:linear-gradient(135deg,var(--acc),var(--info));
-  border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.1rem;
-  flex-shrink:0;
-}
-.brand-text{flex:1;min-width:0}
-.brand-name{font-weight:800;font-size:.92rem;letter-spacing:-.3px}
-.brand-sub{font-size:.6rem;color:var(--tx3);font-family:var(--m);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+/* APP SHELL */
+.app{display:none;grid-template-columns:240px 1fr;height:100vh;overflow:hidden}
+.app.active{display:grid}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.brand-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--acc),var(--info));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.brand-name{font-weight:800;font-size:.92rem}
+.brand-sub{font-size:.58rem;color:var(--tx3);font-family:var(--m);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
 
-.nav-section{padding:14px 12px 6px}
-.nav-label{
-  font-size:.55rem;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:1.2px;
-  color:var(--tx3);
-  padding:0 8px 6px;
-}
-.nav-item{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:8px 12px;
-  border-radius:6px;
-  cursor:pointer;
-  font-size:.78rem;
-  font-weight:500;
-  color:var(--tx2);
-  transition:all .12s;
-  margin-bottom:1px;
-}
+.case-selector{margin:10px;padding:10px;background:var(--panel);border:1px solid var(--border);border-radius:8px;cursor:pointer;position:relative}
+.case-selector:hover{border-color:var(--border2)}
+.case-selector-label{font-size:.55rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:4px;display:flex;justify-content:space-between}
+.case-selector-name{font-size:.78rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.case-selector-meta{font-size:.58rem;color:var(--tx3);font-family:var(--m);margin-top:3px}
+.case-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--panel2);border:1px solid var(--border2);border-radius:8px;padding:6px;box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:50;display:none;max-height:300px;overflow-y:auto}
+.case-dropdown.open{display:block}
+.case-dd-item{padding:8px 10px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:.72rem}
+.case-dd-item:hover{background:var(--panel)}
+.case-dd-item.active{background:var(--bg2);color:var(--acc)}
+.case-dd-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.case-dd-meta{font-size:.55rem;color:var(--tx3);font-family:var(--m)}
+.case-dd-divider{height:1px;background:var(--border);margin:4px 0}
+.case-dd-action{padding:8px 10px;border-radius:6px;cursor:pointer;font-size:.68rem;color:var(--acc);font-weight:600;display:flex;align-items:center;gap:8px}
+.case-dd-action:hover{background:var(--panel)}
+
+.nav-section{padding:10px 10px 4px}
+.nav-label{font-size:.53rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);padding:0 8px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:.76rem;font-weight:500;color:var(--tx2);margin-bottom:1px}
 .nav-item:hover{background:var(--panel);color:var(--tx)}
 .nav-item.active{background:var(--panel2);color:var(--acc)}
 .nav-item.active::before{content:'';width:3px;height:14px;background:var(--acc);border-radius:2px;margin-left:-12px;margin-right:7px}
 .nav-item .ico{width:14px;text-align:center;font-size:.85rem}
-.nav-item .ct{
-  margin-left:auto;
-  background:var(--panel);
-  padding:1px 7px;
-  border-radius:10px;
-  font-size:.55rem;
-  font-family:var(--m);
-  color:var(--tx3);
-}
+.nav-item .ct{margin-left:auto;background:var(--panel);padding:1px 7px;border-radius:10px;font-size:.55rem;font-family:var(--m);color:var(--tx3)}
 .nav-item.active .ct{background:var(--acc);color:var(--bg)}
 
-.sidebar-footer{
-  margin-top:auto;
-  padding:12px 16px;
-  border-top:1px solid var(--border);
-  font-size:.6rem;
-  color:var(--tx3);
-  font-family:var(--m);
-}
-.sidebar-footer a{color:var(--acc);text-decoration:none}
-.sidebar-footer a:hover{text-decoration:underline}
+.user-box{margin-top:auto;padding:12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--info));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;color:var(--bg);flex-shrink:0}
+.user-avatar.demo{background:linear-gradient(135deg,var(--purple),#d9a0ff)}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:.74rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:.55rem;color:var(--tx3);font-family:var(--m);text-transform:uppercase}
+.user-logout{padding:6px 8px;background:var(--panel);border:1px solid var(--border2);border-radius:5px;color:var(--tx2);cursor:pointer;font-size:.7rem}
+.user-logout:hover{background:var(--crit);color:#fff;border-color:var(--crit)}
 
-/* ═══ MAIN ═══ */
-.main{
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  background:var(--bg);
-}
-.topbar{
-  height:48px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  padding:0 24px;
-  background:var(--bg2);
-  gap:14px;
-  flex-shrink:0;
-}
+.main{display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;background:var(--bg2);gap:14px}
 .topbar-title{font-weight:700;font-size:.86rem}
 .topbar-sub{color:var(--tx3);font-size:.7rem;font-family:var(--m)}
-.topbar-actions{margin-left:auto;display:flex;gap:8px}
-
-.btn{
-  padding:6px 14px;
-  border-radius:6px;
-  border:1px solid var(--border2);
-  background:var(--panel);
-  color:var(--tx);
-  font-size:.7rem;
-  font-weight:600;
-  cursor:pointer;
-  font-family:var(--f);
-  transition:all .12s;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-}
+.topbar-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.demo-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(168,139,255,.1);border:1px solid rgba(168,139,255,.3);color:var(--purple);border-radius:5px;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;font-family:var(--m)}
+.btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--panel);color:var(--tx);font-size:.7rem;font-weight:600;cursor:pointer;font-family:var(--f);display:inline-flex;align-items:center;gap:6px}
 .btn:hover{background:var(--panel2);border-color:var(--acc)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
 .btn.primary{background:var(--acc);color:var(--bg);border-color:var(--acc)}
-.btn.primary:hover{background:var(--acc2);border-color:var(--acc2)}
+.btn.primary:hover{background:var(--acc2)}
 .btn.crit{background:transparent;border-color:var(--crit);color:var(--crit)}
-.btn.crit:hover{background:var(--crit);color:var(--bg)}
-
+.btn.crit:hover{background:var(--crit);color:#fff}
 .content{flex:1;overflow-y:auto;padding:24px}
 
-/* ═══ CARDS ═══ */
-.card{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:18px;
-  margin-bottom:14px;
-}
-.card-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:12px;
-  gap:12px;
-}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px}
 .card-title{font-weight:700;font-size:.84rem;display:flex;align-items:center;gap:8px}
 .card-sub{font-size:.66rem;color:var(--tx3);font-family:var(--m)}
 
-/* ═══ STATS ═══ */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.stat{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:14px 16px;
-  position:relative;
-  overflow:hidden;
-}
-.stat::before{
-  content:'';
-  position:absolute;
-  top:0;left:0;width:3px;height:100%;
-  background:var(--acc);
-}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--acc)}
 .stat.warn::before{background:var(--warn)}
 .stat.crit::before{background:var(--crit)}
 .stat.info::before{background:var(--info)}
@@ -206,844 +117,901 @@ body{
 .stat-value{font-size:1.6rem;font-weight:800;font-family:var(--m);line-height:1}
 .stat-meta{font-size:.62rem;color:var(--tx3);margin-top:4px;font-family:var(--m)}
 
-/* ═══ INPUTS ═══ */
-.input{
-  width:100%;
-  padding:9px 12px;
-  background:var(--bg2);
-  border:1px solid var(--border2);
-  border-radius:6px;
-  color:var(--tx);
-  font-family:var(--m);
-  font-size:.74rem;
-}
+.input{width:100%;padding:9px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--tx);font-family:var(--m);font-size:.74rem}
 .input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(57,208,168,.12)}
-textarea.input{font-family:var(--m);min-height:120px;resize:vertical;line-height:1.6}
-.input-label{
-  display:block;
-  font-size:.62rem;
-  text-transform:uppercase;
-  letter-spacing:.8px;
-  color:var(--tx3);
-  margin-bottom:6px;
-  font-weight:700;
-}
-.select{
-  padding:9px 30px 9px 12px;
-  background:var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%239ba8c0' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E") no-repeat right 12px center;
-  border:1px solid var(--border2);
-  border-radius:6px;
-  color:var(--tx);
-  font-family:var(--m);
-  font-size:.72rem;
-  appearance:none;
-  cursor:pointer;
-}
-.select:focus{outline:none;border-color:var(--acc)}
+textarea.input{min-height:120px;resize:vertical;line-height:1.6}
+.input-label{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:6px;font-weight:700}
+.select{padding:9px 30px 9px 12px;background:var(--bg2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%239ba8c0' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E") no-repeat right 12px center;border:1px solid var(--border2);border-radius:6px;color:var(--tx);font-family:var(--m);font-size:.72rem;appearance:none;cursor:pointer}
 
-/* ═══ TABLE ═══ */
-.tbl{
-  width:100%;
-  border-collapse:collapse;
-  font-size:.72rem;
-}
-.tbl th{
-  text-align:left;
-  padding:8px 12px;
-  font-size:.55rem;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  color:var(--tx3);
-  font-weight:700;
-  border-bottom:1px solid var(--border);
-  background:var(--bg2);
-  position:sticky;
-  top:0;
-}
-.tbl td{
-  padding:10px 12px;
-  border-bottom:1px solid var(--border);
-  vertical-align:top;
-}
+.tbl{width:100%;border-collapse:collapse;font-size:.72rem}
+.tbl th{text-align:left;padding:8px 12px;font-size:.55rem;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);font-weight:700;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border)}
 .tbl tr:hover td{background:var(--panel2)}
 .tbl .mono{font-family:var(--m);font-size:.66rem;color:var(--tx2);word-break:break-all}
 .tbl .num{font-family:var(--m);text-align:right;color:var(--tx3)}
 
-/* ═══ BADGES ═══ */
-.badge{
-  display:inline-block;
-  padding:2px 8px;
-  border-radius:4px;
-  font-size:.55rem;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.6px;
-  font-family:var(--m);
-  border:1px solid;
-}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;font-family:var(--m);border:1px solid}
 .b-acc{background:rgba(57,208,168,.1);color:var(--acc);border-color:rgba(57,208,168,.3)}
 .b-warn{background:rgba(245,179,66,.1);color:var(--warn);border-color:rgba(245,179,66,.3)}
 .b-crit{background:rgba(255,84,112,.1);color:var(--crit);border-color:rgba(255,84,112,.3)}
 .b-info{background:rgba(95,168,255,.1);color:var(--info);border-color:rgba(95,168,255,.3)}
 .b-mute{background:var(--panel2);color:var(--tx3);border-color:var(--border2)}
 
-/* ═══ DROPZONE ═══ */
-.dropzone{
-  border:2px dashed var(--border2);
-  border-radius:12px;
-  padding:48px 24px;
-  text-align:center;
-  background:var(--panel);
-  cursor:pointer;
-  transition:all .15s;
-}
+.dropzone{border:2px dashed var(--border2);border-radius:12px;padding:48px 24px;text-align:center;background:var(--panel);cursor:pointer}
 .dropzone:hover,.dropzone.over{border-color:var(--acc);background:var(--panel2)}
+.dropzone.locked{cursor:not-allowed;opacity:.4}
 .dropzone-icon{font-size:2.2rem;margin-bottom:8px;opacity:.6}
 .dropzone-title{font-weight:700;font-size:.88rem;margin-bottom:4px}
 .dropzone-sub{font-size:.7rem;color:var(--tx3)}
 
-/* ═══ TERMINAL ═══ */
-.term{
-  background:#000;
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:14px 16px;
-  font-family:var(--m);
-  font-size:.7rem;
-  line-height:1.7;
-  color:var(--tx2);
-  overflow-x:auto;
-  white-space:pre-wrap;
-  word-break:break-word;
-  position:relative;
-}
+.term{background:#000;border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-family:var(--m);font-size:.7rem;line-height:1.7;color:var(--tx2);overflow-x:auto;white-space:pre-wrap;word-break:break-word;position:relative}
 .term .pr{color:var(--acc)}
 .term .cm{color:var(--info)}
 .term .cm-cm{color:var(--tx3)}
 .term .key{color:var(--warn);background:rgba(245,179,66,.1);padding:0 3px}
-.term .er{color:var(--crit)}
-.copy-btn{
-  position:absolute;
-  top:8px;right:8px;
-  padding:3px 9px;
-  font-size:.55rem;
-  background:var(--panel);
-  border:1px solid var(--border2);
-  border-radius:4px;
-  color:var(--tx2);
-  cursor:pointer;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  font-weight:600;
-}
+.copy-btn{position:absolute;top:8px;right:8px;padding:3px 9px;font-size:.55rem;background:var(--panel);border:1px solid var(--border2);border-radius:4px;color:var(--tx2);cursor:pointer;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
 .copy-btn:hover{background:var(--acc);color:var(--bg);border-color:var(--acc)}
 
-/* ═══ FILTER BAR ═══ */
-.filter-bar{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom:14px;
-  padding:12px;
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:8px;
-}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;align-items:center}
 .fb-group{display:flex;align-items:center;gap:6px}
 .fb-label{font-size:.6rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px;font-weight:700}
-
-.chip{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  padding:5px 11px;
-  border-radius:14px;
-  font-size:.62rem;
-  font-weight:600;
-  font-family:var(--m);
-  background:var(--panel);
-  border:1px solid var(--border2);
-  color:var(--tx2);
-  cursor:pointer;
-  transition:all .12s;
-}
+.chip{display:inline-flex;padding:5px 11px;border-radius:14px;font-size:.62rem;font-weight:600;font-family:var(--m);background:var(--panel);border:1px solid var(--border2);color:var(--tx2);cursor:pointer}
 .chip:hover{border-color:var(--acc);color:var(--tx)}
 .chip.on{background:var(--acc);color:var(--bg);border-color:var(--acc)}
 
-/* ═══ TIMELINE ═══ */
-.tl-row{
-  display:grid;
-  grid-template-columns:130px 12px 1fr;
-  gap:0;
-  padding:8px 0;
-  border-bottom:1px solid var(--border);
-}
+.tl-row{display:grid;grid-template-columns:130px 12px 1fr;padding:8px 0;border-bottom:1px solid var(--border)}
 .tl-time{font-family:var(--m);font-size:.62rem;color:var(--tx3);padding-right:12px;text-align:right}
 .tl-dot-col{display:flex;flex-direction:column;align-items:center}
 .tl-dot{width:8px;height:8px;border-radius:50%;background:var(--acc);margin-top:6px}
 .tl-line{flex:1;width:2px;background:var(--border);margin-top:2px}
 .tl-content{padding-left:14px;font-size:.74rem}
-.tl-title{font-weight:600;color:var(--tx);margin-bottom:2px}
+.tl-title{font-weight:600;margin-bottom:2px}
 .tl-detail{font-family:var(--m);font-size:.62rem;color:var(--tx3);word-break:break-all}
 
-/* ═══ IOC FINDING ═══ */
-.ioc-row{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-left:3px solid var(--crit);
-  border-radius:6px;
-  padding:12px 14px;
-  margin-bottom:6px;
-}
+.ioc-row{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--crit);border-radius:6px;padding:12px 14px;margin-bottom:6px}
 .ioc-row.high{border-left-color:var(--warn)}
 .ioc-row.info{border-left-color:var(--info)}
 .ioc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:10px;flex-wrap:wrap}
 .ioc-type{font-weight:700;font-size:.74rem}
 .ioc-path{font-family:var(--m);font-size:.6rem;color:var(--tx3);word-break:break-all;margin-top:4px}
-.ioc-sample{
-  font-family:var(--m);
-  font-size:.6rem;
-  background:var(--bg);
-  padding:6px 9px;
-  border-radius:4px;
-  margin-top:6px;
-  color:var(--warn);
-  border:1px solid var(--border);
-}
+.ioc-sample{font-family:var(--m);font-size:.6rem;background:var(--bg);padding:6px 9px;border-radius:4px;margin-top:6px;color:var(--warn);border:1px solid var(--border)}
 
-/* ═══ TWO-COL ═══ */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .split-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-
-/* ═══ MISC ═══ */
-.empty{
-  text-align:center;
-  padding:48px 20px;
-  color:var(--tx3);
-  font-size:.78rem;
-}
+.empty{text-align:center;padding:48px 20px;color:var(--tx3);font-size:.78rem}
 .empty-icon{font-size:2.4rem;opacity:.3;margin-bottom:10px}
-
 .kv{display:grid;grid-template-columns:140px 1fr;gap:6px 14px;font-size:.72rem;margin-bottom:10px}
 .kv dt{color:var(--tx3);font-family:var(--m);font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-.kv dd{color:var(--tx)}
-
+.kv dd{word-break:break-all}
 .divider{height:1px;background:var(--border);margin:14px 0}
-
-.checkbox{
-  display:flex;align-items:center;gap:8px;
-  font-size:.72rem;color:var(--tx2);
-  cursor:pointer;padding:6px 0;
-}
-.checkbox input{accent-color:var(--acc);cursor:pointer}
-
+.checkbox{display:flex;align-items:center;gap:8px;font-size:.72rem;color:var(--tx2);cursor:pointer;padding:6px 0}
+.checkbox input{accent-color:var(--acc)}
 .code-inline{font-family:var(--m);font-size:.66rem;background:var(--bg2);padding:1px 5px;border-radius:3px;color:var(--warn);border:1px solid var(--border)}
-
-.alert{
-  padding:11px 14px;
-  border-radius:6px;
-  background:rgba(57,208,168,.08);
-  border:1px solid rgba(57,208,168,.25);
-  color:var(--acc);
-  font-size:.7rem;
-  margin-bottom:14px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+.alert{padding:11px 14px;border-radius:6px;background:rgba(57,208,168,.08);border:1px solid rgba(57,208,168,.25);color:var(--acc);font-size:.7rem;margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .alert.warn{background:rgba(245,179,66,.08);border-color:rgba(245,179,66,.25);color:var(--warn)}
-.alert.crit{background:rgba(255,84,112,.08);border-color:rgba(255,84,112,.25);color:var(--crit)}
+.alert.purple{background:rgba(168,139,255,.08);border-color:rgba(168,139,255,.25);color:var(--purple)}
 
-/* ═══ MOBILE ═══ */
-@media(max-width:900px){
-  .app{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .stats{grid-template-columns:1fr 1fr}
-  .split,.split-3{grid-template-columns:1fr}
-  .content{padding:14px}
-  .topbar{padding:0 14px}
-}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(4px)}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;width:100%;max-width:420px}
+.modal h3{font-size:1rem;font-weight:800;margin-bottom:14px}
+.modal-actions{display:flex;gap:8px;margin-top:18px;justify-content:flex-end}
 
 .view{display:none}
-.view.active{display:block;animation:fade .25s ease-out}
-@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-
-/* Detail panel for selected artifact */
-.detail{
-  position:fixed;
-  top:0;right:0;
-  width:480px;
-  max-width:100vw;
-  height:100vh;
-  background:var(--bg2);
-  border-left:1px solid var(--border);
-  padding:24px;
-  overflow-y:auto;
-  transform:translateX(100%);
-  transition:transform .3s cubic-bezier(.4,0,.2,1);
-  z-index:200;
-  box-shadow:-20px 0 60px rgba(0,0,0,.4);
-}
+.view.active{display:block}
+.detail{position:fixed;top:0;right:0;width:480px;max-width:100vw;height:100vh;background:var(--bg2);border-left:1px solid var(--border);padding:24px;overflow-y:auto;transform:translateX(100%);transition:transform .3s;z-index:200;box-shadow:-20px 0 60px rgba(0,0,0,.4)}
 .detail.open{transform:translateX(0)}
-.detail-close{
-  position:absolute;
-  top:14px;right:14px;
-  width:28px;height:28px;
-  border-radius:6px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  color:var(--tx2);
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;
-}
-.detail-close:hover{background:var(--crit);color:#fff;border-color:var(--crit)}
+.detail-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:6px;background:var(--panel);border:1px solid var(--border);color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem}
 .detail h3{font-size:1rem;font-weight:800;margin-bottom:4px;padding-right:36px}
 .detail .cat{font-size:.62rem;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;font-weight:700}
 .detail h4{font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--acc);margin:18px 0 8px;font-weight:700;border-bottom:1px solid var(--border);padding-bottom:4px}
-.detail .path-os{font-family:var(--m);font-size:.62rem;color:var(--tx3);margin-right:8px;text-transform:uppercase;font-weight:700;display:inline-block;width:38px}
 .detail .path-line{font-family:var(--m);font-size:.66rem;color:var(--tx2);padding:4px 0;word-break:break-all;border-bottom:1px dashed var(--border)}
 .detail p{font-size:.74rem;line-height:1.7;color:var(--tx2)}
+
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;background:var(--panel);border:1px solid var(--acc);border-left:3px solid var(--acc);border-radius:8px;font-size:.74rem;box-shadow:0 10px 40px rgba(0,0,0,.4);z-index:400;transform:translateY(120%);transition:transform .3s}
+.toast.show{transform:translateY(0)}
+.toast.crit{border-color:var(--crit);border-left-color:var(--crit)}
+
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}.stats{grid-template-columns:1fr 1fr}.split,.split-3{grid-template-columns:1fr}.content{padding:14px}}
 </style>
 </head>
 <body>
 
-<div class="app">
-
-<!-- ═══ SIDEBAR ═══ -->
-<aside class="sidebar">
-  <div class="brand">
-    <div class="brand-mark">🔍</div>
-    <div class="brand-text">
-      <div class="brand-name">LLM-DFIR</div>
-      <div class="brand-sub">v1.0 · Toolkit</div>
+<!-- LOGIN SCREEN -->
+<div class="auth-screen" id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="auth-brand-mark">🔍</div>
+      <div>
+        <div class="auth-brand-name">LLM-DFIR</div>
+        <div class="auth-brand-sub">v1.0 · AI Forensics Toolkit</div>
+      </div>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab on" data-auth-tab="signin">Sign In</div>
+      <div class="auth-tab" data-auth-tab="register">Create Account</div>
+    </div>
+    <div class="auth-error" id="auth-error"></div>
+    <form id="auth-form" onsubmit="return handleAuth(event)">
+      <div class="auth-field">
+        <label class="auth-label">Username</label>
+        <input class="auth-input" id="auth-username" autocomplete="username" required>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" id="auth-password" type="password" autocomplete="current-password" required minlength="4">
+      </div>
+      <button type="submit" class="auth-btn" id="auth-btn">Sign In</button>
+    </form>
+    <div class="auth-divider">or</div>
+    <button class="auth-demo-btn" onclick="loginDemo()">
+      <span>👁️</span>
+      <span>Explore with Demo Account</span>
+    </button>
+    <div class="auth-footer">
+      <strong>Local-Only Storage</strong>
+      Accounts and cases are stored in your browser.<br>
+      Nothing is sent to any server.<br>
+      <a href="https://github.com/SiteQ8/LLM-DFIR" target="_blank">github.com/SiteQ8/LLM-DFIR</a>
     </div>
   </div>
-
-  <div class="nav-section">
-    <div class="nav-label">Workspace</div>
-    <div class="nav-item active" data-view="dashboard"><span class="ico">▣</span>Dashboard</div>
-    <div class="nav-item" data-view="import"><span class="ico">↥</span>Import Evidence<span class="ct" id="nav-import-ct">0</span></div>
-    <div class="nav-item" data-view="artifacts"><span class="ico">◉</span>Artifacts<span class="ct" id="nav-art-ct">0</span></div>
-    <div class="nav-item" data-view="iocs"><span class="ico">!</span>IOCs<span class="ct" id="nav-ioc-ct">0</span></div>
-    <div class="nav-item" data-view="timeline"><span class="ico">⏱</span>Timeline<span class="ct" id="nav-tl-ct">0</span></div>
-  </div>
-
-  <div class="nav-section">
-    <div class="nav-label">Tools</div>
-    <div class="nav-item" data-view="generator"><span class="ico">⚙</span>Command Builder</div>
-    <div class="nav-item" data-view="lookup"><span class="ico">🔎</span>Path Lookup</div>
-    <div class="nav-item" data-view="scanner"><span class="ico">⚗</span>IOC Scanner</div>
-    <div class="nav-item" data-view="reference"><span class="ico">📖</span>Reference</div>
-  </div>
-
-  <div class="nav-section">
-    <div class="nav-label">Operations</div>
-    <div class="nav-item" data-view="playbooks"><span class="ico">⚐</span>Playbooks<span class="ct">3</span></div>
-    <div class="nav-item" data-view="baseline"><span class="ico">⊞</span>Baseline</div>
-  </div>
-
-  <div class="sidebar-footer">
-    LLM-DFIR Toolkit<br>
-    <a href="https://github.com/SiteQ8/LLM-DFIR" target="_blank">github.com/SiteQ8/LLM-DFIR</a>
-  </div>
-</aside>
-
-<!-- ═══ MAIN ═══ -->
-<main class="main">
-
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div>
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
-    </div>
-    <div class="topbar-sub" id="topbar-sub">Overview of current case evidence</div>
-    <div class="topbar-actions">
-      <button class="btn" onclick="exportCase()">↧ Export Case</button>
-      <button class="btn crit" onclick="resetCase()">⌫ Reset</button>
-    </div>
-  </div>
-
-  <div class="content">
-
-    <!-- ═══ DASHBOARD ═══ -->
-    <div class="view active" id="view-dashboard">
-      <div class="stats">
-        <div class="stat"><div class="stat-label">Artifacts Loaded</div><div class="stat-value" id="d-artifacts">0</div><div class="stat-meta" id="d-art-meta">Import to begin</div></div>
-        <div class="stat warn"><div class="stat-label">IOCs Detected</div><div class="stat-value" id="d-iocs">0</div><div class="stat-meta" id="d-ioc-meta">No findings</div></div>
-        <div class="stat crit"><div class="stat-label">Critical Findings</div><div class="stat-value" id="d-crit">0</div><div class="stat-meta">API keys / private keys</div></div>
-        <div class="stat info"><div class="stat-label">Timeline Events</div><div class="stat-value" id="d-tl">0</div><div class="stat-meta">Sorted by mtime</div></div>
-      </div>
-
-      <div class="split">
-        <div class="card">
-          <div class="card-head"><div class="card-title">▣ Quick Start</div></div>
-          <p style="font-size:.78rem;color:var(--tx2);line-height:1.7;margin-bottom:12px">Run the triage script on a target host, then drag the output files into the Import Evidence panel to review them here.</p>
-          <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">$</span> <span class="cm">git clone https://github.com/SiteQ8/LLM-DFIR.git</span>
-<span class="pr">$</span> <span class="cm">cd LLM-DFIR</span>
-<span class="pr">$</span> <span class="cm">python3 scripts/llm_triage.py --output ./evidence</span>
-<span class="cm-cm"># Then drop ./evidence/timeline.json + iocs.json here</span></div>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><div class="card-title">⚐ Recent Activity</div></div>
-          <div id="recent-activity"><div class="empty"><div class="empty-icon">⏱</div>No activity yet. Import evidence to begin.</div></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">◉ Artifact Categories Reference</div>
-          <div class="card-sub">15 types · 8 categories · Win/macOS/Linux</div>
-        </div>
-        <div class="split-3">
-          <div>
-            <div class="badge b-info" style="margin-bottom:8px">IDE PLUGIN</div>
-            <div style="font-size:.7rem;color:var(--tx2);line-height:1.8">GitHub Copilot · Cursor · Claude Code · Codeium</div>
-          </div>
-          <div>
-            <div class="badge b-crit" style="margin-bottom:8px">MCP</div>
-            <div style="font-size:.7rem;color:var(--tx2);line-height:1.8">Server Config · Server Logs (JSON-RPC transcripts)</div>
-          </div>
-          <div>
-            <div class="badge b-warn" style="margin-bottom:8px">BROWSER AI</div>
-            <div style="font-size:.7rem;color:var(--tx2);line-height:1.8">Chrome LevelDB · Firefox IndexedDB</div>
-          </div>
-          <div>
-            <div class="badge b-info" style="margin-bottom:8px">VECTOR DB</div>
-            <div style="font-size:.7rem;color:var(--tx2);line-height:1.8">ChromaDB · FAISS · HuggingFace cache</div>
-          </div>
-          <div>
-            <div class="badge b-warn" style="margin-bottom:8px">API CLIENT</div>
-            <div style="font-size:.7rem;color:var(--tx2);line-height:1.8">OpenAI SDK · Anthropic SDK · Azure OpenAI</div>
-          </div>
-          <div>
-            <div class="badge b-acc" style="margin-bottom:8px">LOCAL LLM</div>
-            <div style="font-size:.7rem;color:var(--tx2);line-height:1.8">Ollama · LangChain trace cache</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ IMPORT ═══ -->
-    <div class="view" id="view-import">
-      <div class="alert">
-        <span>ⓘ</span>
-        <span>Drop the output files from <code class="code-inline">scripts/llm_triage.py</code> here. JSON files (timeline.json, iocs.json) and CSV inventory are supported. Files are processed entirely in your browser — nothing is uploaded.</span>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">↥ Import Triage Output</div>
-          <div class="card-sub">Drop or click to upload</div>
-        </div>
-        <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
-          <div class="dropzone-icon">📁</div>
-          <div class="dropzone-title">Drop triage files here</div>
-          <div class="dropzone-sub">timeline.json · iocs.json · evidence_inventory.csv</div>
-          <input type="file" id="file-input" multiple accept=".json,.csv" style="display:none">
-        </div>
-      </div>
-
-      <div class="split">
-        <div class="card">
-          <div class="card-head"><div class="card-title">📋 Imported Files</div></div>
-          <div id="imported-list"><div class="empty"><div class="empty-icon">📂</div>No files imported yet</div></div>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><div class="card-title">⚡ Quick Import — Sample Data</div></div>
-          <p style="font-size:.72rem;color:var(--tx2);margin-bottom:10px">Load sample triage output to explore the interface without running the script.</p>
-          <button class="btn primary" onclick="loadSampleData()">▶ Load Sample Case</button>
-          <div class="divider"></div>
-          <p style="font-size:.66rem;color:var(--tx3);line-height:1.6">Sample is based on a reconstructed indirect prompt injection incident — 47 artifacts, 8 IOCs, complete timeline.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ ARTIFACTS ═══ -->
-    <div class="view" id="view-artifacts">
-      <div class="filter-bar">
-        <div class="fb-group" style="flex:1">
-          <input class="input" id="art-search" placeholder="Search artifacts by tool, path, or category..." style="margin:0">
-        </div>
-        <div class="fb-group">
-          <span class="fb-label">Category</span>
-          <select class="select" id="art-cat-filter">
-            <option value="">All</option>
-          </select>
-        </div>
-        <div class="fb-group">
-          <span class="fb-label">Sort</span>
-          <select class="select" id="art-sort">
-            <option value="modified-desc">Modified ↓</option>
-            <option value="modified-asc">Modified ↑</option>
-            <option value="size-desc">Size ↓</option>
-            <option value="tool-asc">Tool A→Z</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="card" style="padding:0;overflow:hidden">
-        <table class="tbl" id="art-table">
-          <thead><tr>
-            <th>Tool</th>
-            <th>Category</th>
-            <th>Path</th>
-            <th class="num">Size</th>
-            <th>Modified</th>
-          </tr></thead>
-          <tbody id="art-body"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ═══ IOCS ═══ -->
-    <div class="view" id="view-iocs">
-      <div class="filter-bar">
-        <div class="fb-group">
-          <span class="fb-label">Severity</span>
-          <span class="chip on" data-sev="all">All</span>
-          <span class="chip" data-sev="crit">Critical</span>
-          <span class="chip" data-sev="high">High</span>
-          <span class="chip" data-sev="info">Info</span>
-        </div>
-        <div class="fb-group">
-          <span class="fb-label">Type</span>
-          <span class="chip on" data-iocat="all">All</span>
-          <span class="chip" data-iocat="api_keys">API Keys</span>
-          <span class="chip" data-iocat="injection">Injection</span>
-          <span class="chip" data-iocat="exfil">Exfil</span>
-          <span class="chip" data-iocat="endpoints">Endpoints</span>
-        </div>
-      </div>
-
-      <div id="ioc-list"></div>
-    </div>
-
-    <!-- ═══ TIMELINE ═══ -->
-    <div class="view" id="view-timeline">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title">⏱ Forensic Timeline</div>
-          <div class="card-sub" id="tl-meta">No events loaded</div>
-        </div>
-        <div id="tl-list"></div>
-      </div>
-    </div>
-
-    <!-- ═══ COMMAND GENERATOR ═══ -->
-    <div class="view" id="view-generator">
-      <div class="card">
-        <div class="card-head"><div class="card-title">⚙ Triage Command Builder</div></div>
-        <p style="font-size:.74rem;color:var(--tx2);margin-bottom:14px">Configure and generate a ready-to-run triage command for the target host. Copy the output and run it in the analyst console.</p>
-
-        <div class="split">
-          <div>
-            <label class="input-label">Target Operating System</label>
-            <select class="select" id="gen-os" style="width:100%" onchange="rebuildCommand()">
-              <option value="auto">Auto-detect</option>
-              <option value="macos">macOS</option>
-              <option value="linux">Linux</option>
-              <option value="windows">Windows</option>
-            </select>
-          </div>
-          <div>
-            <label class="input-label">Output Directory</label>
-            <input class="input" id="gen-out" value="./evidence_$(date +%Y%m%d_%H%M%S)" oninput="rebuildCommand()">
-          </div>
-        </div>
-
-        <div class="divider"></div>
-        <label class="input-label">Collection Options</label>
-        <div class="split-3">
-          <label class="checkbox"><input type="checkbox" id="opt-content" checked onchange="rebuildCommand()">Content scan for IOCs</label>
-          <label class="checkbox"><input type="checkbox" id="opt-hash" checked onchange="rebuildCommand()">SHA-256 hashing</label>
-          <label class="checkbox"><input type="checkbox" id="opt-html" checked onchange="rebuildCommand()">HTML report</label>
-        </div>
-
-        <div class="divider"></div>
-        <label class="input-label">Generated Command</label>
-        <div class="term" id="gen-output"><button class="copy-btn" onclick="copyText(this)">copy</button></div>
-
-        <div class="alert warn" style="margin-top:14px">
-          <span>⚠</span>
-          <span>Run on the target host with the privileges of the user being investigated. The script reads files from the home directory and may capture sensitive content.</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head"><div class="card-title">📦 Companion Commands</div></div>
-        <p style="font-size:.7rem;color:var(--tx2);margin-bottom:10px">Useful one-liners for common analyst tasks during an active LLM incident.</p>
-
-        <label class="input-label">Snapshot MCP config + sessions before doing anything</label>
-        <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">#</span> <span class="cm-cm">macOS — preserve volatile state</span>
-<span class="pr">$</span> <span class="cm">cp ~/Library/Application\ Support/Claude/claude_desktop_config.json /Volumes/EVIDENCE/</span>
-<span class="pr">$</span> <span class="cm">cp -r ~/.claude/sessions/ /Volumes/EVIDENCE/sessions/</span>
-<span class="pr">$</span> <span class="cm">cp -r ~/Library/Logs/Claude/ /Volumes/EVIDENCE/claude_logs/</span></div>
-
-        <label class="input-label" style="margin-top:14px">Enumerate MCP tool calls from logs</label>
-        <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">$</span> <span class="cm">grep -h '"method":"tools/call"' ~/Library/Logs/Claude/mcp-server-*.log \
-  | jq -r '.params.name' | sort | uniq -c | sort -rn</span></div>
-
-        <label class="input-label" style="margin-top:14px">Query Cursor workspace state for chat history</label>
-        <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">$</span> <span class="cm">sqlite3 ~/Library/Application\ Support/Cursor/User/workspaceStorage/*/state.vscdb \
-  "SELECT key, substr(value,1,200) FROM ItemTable WHERE key LIKE '%composer%';"</span></div>
-
-        <label class="input-label" style="margin-top:14px">Dump ChromaDB indexed documents</label>
-        <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">$</span> <span class="cm">sqlite3 ~/.chroma/chroma.sqlite3 \
-  "SELECT collection_id, substr(document,1,500) FROM embeddings_queue LIMIT 50;"</span></div>
-      </div>
-    </div>
-
-    <!-- ═══ PATH LOOKUP ═══ -->
-    <div class="view" id="view-lookup">
-      <div class="card">
-        <div class="card-head"><div class="card-title">🔎 Artifact Path Lookup</div></div>
-        <p style="font-size:.74rem;color:var(--tx2);margin-bottom:14px">Paste a file path you found during analysis. The tool will identify which AI artifact category it belongs to and what evidence it contains.</p>
-
-        <label class="input-label">File path</label>
-        <input class="input" id="lookup-input" placeholder="e.g. ~/Library/Application Support/Claude/claude_desktop_config.json" oninput="performLookup()">
-
-        <div id="lookup-result" style="margin-top:16px"></div>
-      </div>
-    </div>
-
-    <!-- ═══ IOC SCANNER ═══ -->
-    <div class="view" id="view-scanner">
-      <div class="card">
-        <div class="card-head"><div class="card-title">⚗ IOC Pattern Scanner</div></div>
-        <p style="font-size:.74rem;color:var(--tx2);margin-bottom:14px">Paste content from a suspicious file. The scanner runs the same patterns as the triage script and shows what would be flagged.</p>
-
-        <label class="input-label">Content to scan</label>
-        <textarea class="input" id="scanner-input" placeholder="Paste file content, log lines, prompts, or any text..." oninput="performScan()"></textarea>
-
-        <div class="split" style="margin-top:14px">
-          <div>
-            <div class="card-sub" style="margin-bottom:6px">Detection Patterns</div>
-            <div style="font-size:.66rem;color:var(--tx3);line-height:1.8">
-              <strong style="color:var(--acc)">API Keys:</strong> sk-* · sk-ant-* · AIza* · pcsk_* · hf_*<br>
-              <strong style="color:var(--info)">Endpoints:</strong> openai.com · anthropic.com · azure · google · cohere<br>
-              <strong style="color:var(--warn)">Injection:</strong> ignore previous · ChatML · jailbreak · DAN<br>
-              <strong style="color:var(--crit)">Exfil:</strong> private keys · SSN · CC · password keywords
-            </div>
-          </div>
-          <div id="scanner-results"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ REFERENCE ═══ -->
-    <div class="view" id="view-reference">
-      <div class="filter-bar">
-        <input class="input" id="ref-search" placeholder="Search artifacts..." style="flex:1;margin:0">
-        <select class="select" id="ref-cat">
-          <option value="">All Categories</option>
-        </select>
-      </div>
-      <div id="ref-list"></div>
-    </div>
-
-    <!-- ═══ PLAYBOOKS ═══ -->
-    <div class="view" id="view-playbooks">
-      <div id="pb-list"></div>
-    </div>
-
-    <!-- ═══ BASELINE ═══ -->
-    <div class="view" id="view-baseline">
-      <div class="alert">
-        <span>ⓘ</span>
-        <span>Minimum logging controls every organization should enable. Each item includes a working configuration snippet for common collection tools.</span>
-      </div>
-      <div id="bl-list"></div>
-    </div>
-
-  </div>
-</main>
 </div>
 
-<!-- ═══ DETAIL PANEL ═══ -->
+<!-- APP -->
+<div class="app" id="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">🔍</div>
+      <div>
+        <div class="brand-name">LLM-DFIR</div>
+        <div class="brand-sub">v1.0</div>
+      </div>
+    </div>
+
+    <div class="case-selector" id="case-selector" onclick="toggleCaseDropdown(event)">
+      <div class="case-selector-label"><span>Active Case</span><span>▾</span></div>
+      <div class="case-selector-name" id="case-selector-name">No case</div>
+      <div class="case-selector-meta" id="case-selector-meta">—</div>
+      <div class="case-dropdown" id="case-dropdown">
+        <div id="case-dd-list"></div>
+        <div class="case-dd-divider"></div>
+        <div class="case-dd-action" onclick="openNewCaseModal(event)"><span>+</span><span>New Case</span></div>
+        <div class="case-dd-action" onclick="renameCurrentCase(event)"><span>✎</span><span>Rename Current</span></div>
+        <div class="case-dd-action" style="color:var(--crit)" onclick="deleteCurrentCase(event)"><span>×</span><span>Delete Current</span></div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <div class="nav-item active" data-view="dashboard"><span class="ico">▣</span>Dashboard</div>
+      <div class="nav-item" data-view="import"><span class="ico">↥</span>Import Evidence<span class="ct" id="nav-import-ct">0</span></div>
+      <div class="nav-item" data-view="artifacts"><span class="ico">◉</span>Artifacts<span class="ct" id="nav-art-ct">0</span></div>
+      <div class="nav-item" data-view="iocs"><span class="ico">!</span>IOCs<span class="ct" id="nav-ioc-ct">0</span></div>
+      <div class="nav-item" data-view="timeline"><span class="ico">⏱</span>Timeline<span class="ct" id="nav-tl-ct">0</span></div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <div class="nav-item" data-view="generator"><span class="ico">⚙</span>Command Builder</div>
+      <div class="nav-item" data-view="lookup"><span class="ico">🔎</span>Path Lookup</div>
+      <div class="nav-item" data-view="scanner"><span class="ico">⚗</span>IOC Scanner</div>
+      <div class="nav-item" data-view="reference"><span class="ico">📖</span>Reference</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Operations</div>
+      <div class="nav-item" data-view="playbooks"><span class="ico">⚐</span>Playbooks<span class="ct">3</span></div>
+      <div class="nav-item" data-view="baseline"><span class="ico">⊞</span>Baseline</div>
+    </div>
+
+    <div class="user-box">
+      <div class="user-avatar" id="user-avatar">A</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">—</div>
+        <div class="user-role" id="user-role">Analyst</div>
+      </div>
+      <button class="user-logout" onclick="logout()" title="Sign out">⎋</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-sub" id="topbar-sub">Overview of current case evidence</div>
+      <div class="topbar-actions">
+        <span class="demo-badge" id="demo-badge" style="display:none">👁️ DEMO MODE</span>
+        <button class="btn" onclick="exportCase()">↧ Export</button>
+        <button class="btn crit" onclick="confirmResetCase()">⌫ Clear</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+<!-- DASHBOARD -->
+<div class="view active" id="view-dashboard">
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Artifacts</div><div class="stat-value" id="d-artifacts">0</div><div class="stat-meta" id="d-art-meta">Import to begin</div></div>
+    <div class="stat warn"><div class="stat-label">IOCs Detected</div><div class="stat-value" id="d-iocs">0</div><div class="stat-meta" id="d-ioc-meta">No findings</div></div>
+    <div class="stat crit"><div class="stat-label">Critical</div><div class="stat-value" id="d-crit">0</div><div class="stat-meta">API keys / private keys</div></div>
+    <div class="stat info"><div class="stat-label">Timeline Events</div><div class="stat-value" id="d-tl">0</div><div class="stat-meta">Sorted by mtime</div></div>
+  </div>
+  <div class="split">
+    <div class="card">
+      <div class="card-head"><div class="card-title">▣ Quick Start</div></div>
+      <p style="font-size:.78rem;color:var(--tx2);line-height:1.7;margin-bottom:12px">Run the triage script on a target host, then drag the output files into the Import tab to review them here.</p>
+      <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">$</span> <span class="cm">git clone https://github.com/SiteQ8/LLM-DFIR.git</span>
+<span class="pr">$</span> <span class="cm">cd LLM-DFIR</span>
+<span class="pr">$</span> <span class="cm">python3 scripts/llm_triage.py --output ./evidence</span></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">⏱ Recent Activity</div></div>
+      <div id="recent-activity"><div class="empty"><div class="empty-icon">⏱</div>No activity yet</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">📂 Case Summary</div></div>
+    <dl class="kv">
+      <dt>Case Name</dt><dd id="case-name-dd">—</dd>
+      <dt>Created</dt><dd id="case-created-dd">—</dd>
+      <dt>Last Modified</dt><dd id="case-modified-dd">—</dd>
+      <dt>Imported Files</dt><dd id="case-files-dd">0</dd>
+      <dt>Categories</dt><dd id="case-cats-dd">—</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- IMPORT -->
+<div class="view" id="view-import">
+  <div class="alert" id="import-alert"><span>ⓘ</span><span>Drop the output files from <code class="code-inline">scripts/llm_triage.py</code> here. JSON files (timeline.json, iocs.json) and the CSV inventory are supported. Files are processed entirely in your browser.</span></div>
+  <div class="alert purple" id="demo-alert" style="display:none"><span>👁️</span><span>Demo account is read-only for imports. Sample evidence is pre-loaded so you can explore all features. Create a real account to import your own triage outputs.</span></div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">↥ Import Triage Output</div><div class="card-sub">Drop or click to upload</div></div>
+    <div class="dropzone" id="dropzone" onclick="handleDropzoneClick()">
+      <div class="dropzone-icon">📁</div>
+      <div class="dropzone-title" id="dropzone-title">Drop triage files here</div>
+      <div class="dropzone-sub">timeline.json · iocs.json · evidence_inventory.csv</div>
+      <input type="file" id="file-input" multiple accept=".json,.csv" style="display:none">
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">📋 Imported Files</div></div>
+    <div id="imported-list"><div class="empty"><div class="empty-icon">📂</div>No files imported yet</div></div>
+  </div>
+</div>
+
+<!-- ARTIFACTS -->
+<div class="view" id="view-artifacts">
+  <div class="filter-bar">
+    <div class="fb-group" style="flex:1"><input class="input" id="art-search" placeholder="Search artifacts..." style="margin:0"></div>
+    <div class="fb-group"><span class="fb-label">Category</span><select class="select" id="art-cat-filter"><option value="">All</option></select></div>
+    <div class="fb-group"><span class="fb-label">Sort</span><select class="select" id="art-sort"><option value="modified-desc">Modified ↓</option><option value="modified-asc">Modified ↑</option><option value="size-desc">Size ↓</option><option value="tool-asc">Tool A→Z</option></select></div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="tbl"><thead><tr><th>Tool</th><th>Category</th><th>Path</th><th class="num">Size</th><th>Modified</th></tr></thead><tbody id="art-body"></tbody></table>
+  </div>
+</div>
+
+<!-- IOCS -->
+<div class="view" id="view-iocs">
+  <div class="filter-bar">
+    <div class="fb-group">
+      <span class="fb-label">Severity</span>
+      <span class="chip on" data-sev="all">All</span>
+      <span class="chip" data-sev="crit">Critical</span>
+      <span class="chip" data-sev="high">High</span>
+      <span class="chip" data-sev="info">Info</span>
+    </div>
+    <div class="fb-group">
+      <span class="fb-label">Type</span>
+      <span class="chip on" data-iocat="all">All</span>
+      <span class="chip" data-iocat="api_keys">API Keys</span>
+      <span class="chip" data-iocat="injection">Injection</span>
+      <span class="chip" data-iocat="exfil">Exfil</span>
+      <span class="chip" data-iocat="endpoints">Endpoints</span>
+    </div>
+  </div>
+  <div id="ioc-list"></div>
+</div>
+
+<!-- TIMELINE -->
+<div class="view" id="view-timeline">
+  <div class="card">
+    <div class="card-head"><div class="card-title">⏱ Forensic Timeline</div><div class="card-sub" id="tl-meta">No events</div></div>
+    <div id="tl-list"></div>
+  </div>
+</div>
+
+<!-- COMMAND BUILDER -->
+<div class="view" id="view-generator">
+  <div class="card">
+    <div class="card-head"><div class="card-title">⚙ Triage Command Builder</div></div>
+    <p style="font-size:.74rem;color:var(--tx2);margin-bottom:14px">Configure and generate a ready-to-run triage command for the target host.</p>
+    <div class="split">
+      <div>
+        <label class="input-label">Target OS</label>
+        <select class="select" id="gen-os" style="width:100%" onchange="rebuildCommand()">
+          <option value="auto">Auto-detect</option><option value="macos">macOS</option><option value="linux">Linux</option><option value="windows">Windows</option>
+        </select>
+      </div>
+      <div>
+        <label class="input-label">Output Directory</label>
+        <input class="input" id="gen-out" value="./evidence" oninput="rebuildCommand()">
+      </div>
+    </div>
+    <div class="divider"></div>
+    <label class="input-label">Collection Options</label>
+    <div class="split-3">
+      <label class="checkbox"><input type="checkbox" id="opt-content" checked onchange="rebuildCommand()">Content scan for IOCs</label>
+      <label class="checkbox"><input type="checkbox" id="opt-hash" checked onchange="rebuildCommand()">SHA-256 hashing</label>
+      <label class="checkbox"><input type="checkbox" id="opt-html" checked onchange="rebuildCommand()">HTML report</label>
+    </div>
+    <div class="divider"></div>
+    <label class="input-label">Generated Command</label>
+    <div class="term" id="gen-output"><button class="copy-btn" onclick="copyText(this)">copy</button></div>
+    <div class="alert warn" style="margin-top:14px"><span>⚠</span><span>Run on the target host with the privileges of the user being investigated.</span></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">📦 Companion Commands</div></div>
+    <label class="input-label">Snapshot MCP config + sessions</label>
+    <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">$</span> <span class="cm">cp ~/Library/Application\ Support/Claude/claude_desktop_config.json /Volumes/EVIDENCE/</span>
+<span class="pr">$</span> <span class="cm">cp -r ~/.claude/sessions/ /Volumes/EVIDENCE/sessions/</span></div>
+    <label class="input-label" style="margin-top:14px">Enumerate MCP tool calls</label>
+    <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">$</span> <span class="cm">grep -h '"method":"tools/call"' ~/Library/Logs/Claude/mcp-server-*.log | jq -r '.params.name' | sort | uniq -c</span></div>
+    <label class="input-label" style="margin-top:14px">Query Cursor workspace state</label>
+    <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">$</span> <span class="cm">sqlite3 ~/Library/Application\ Support/Cursor/User/workspaceStorage/*/state.vscdb "SELECT key,substr(value,1,200) FROM ItemTable WHERE key LIKE '%composer%';"</span></div>
+    <label class="input-label" style="margin-top:14px">Dump ChromaDB indexed documents</label>
+    <div class="term"><button class="copy-btn" onclick="copyText(this)">copy</button><span class="pr">$</span> <span class="cm">sqlite3 ~/.chroma/chroma.sqlite3 "SELECT collection_id,substr(document,1,500) FROM embeddings_queue LIMIT 50;"</span></div>
+  </div>
+</div>
+
+<!-- LOOKUP -->
+<div class="view" id="view-lookup">
+  <div class="card">
+    <div class="card-head"><div class="card-title">🔎 Artifact Path Lookup</div></div>
+    <p style="font-size:.74rem;color:var(--tx2);margin-bottom:14px">Paste a file path you found during analysis. The tool identifies which AI artifact category it belongs to.</p>
+    <label class="input-label">File path</label>
+    <input class="input" id="lookup-input" placeholder="e.g. ~/Library/Application Support/Claude/claude_desktop_config.json" oninput="performLookup()">
+    <div id="lookup-result" style="margin-top:16px"></div>
+  </div>
+</div>
+
+<!-- SCANNER -->
+<div class="view" id="view-scanner">
+  <div class="card">
+    <div class="card-head"><div class="card-title">⚗ IOC Pattern Scanner</div></div>
+    <p style="font-size:.74rem;color:var(--tx2);margin-bottom:14px">Paste content from a suspicious file. The scanner runs the same patterns as the triage script.</p>
+    <label class="input-label">Content to scan</label>
+    <textarea class="input" id="scanner-input" placeholder="Paste file content..." oninput="performScan()"></textarea>
+    <div class="split" style="margin-top:14px">
+      <div>
+        <div class="card-sub" style="margin-bottom:6px">Detection Patterns</div>
+        <div style="font-size:.66rem;color:var(--tx3);line-height:1.8">
+          <strong style="color:var(--acc)">API Keys:</strong> sk-* · sk-ant-* · AIza* · pcsk_* · hf_*<br>
+          <strong style="color:var(--info)">Endpoints:</strong> openai · anthropic · azure · google<br>
+          <strong style="color:var(--warn)">Injection:</strong> ignore previous · ChatML · jailbreak<br>
+          <strong style="color:var(--crit)">Exfil:</strong> private keys · SSN · CC · keywords
+        </div>
+      </div>
+      <div id="scanner-results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- REFERENCE -->
+<div class="view" id="view-reference">
+  <div class="filter-bar">
+    <input class="input" id="ref-search" placeholder="Search artifacts..." style="flex:1;margin:0">
+    <select class="select" id="ref-cat"><option value="">All Categories</option></select>
+  </div>
+  <div id="ref-list"></div>
+</div>
+
+<!-- PLAYBOOKS -->
+<div class="view" id="view-playbooks"><div id="pb-list"></div></div>
+
+<!-- BASELINE -->
+<div class="view" id="view-baseline">
+  <div class="alert"><span>ⓘ</span><span>Minimum logging controls every organization should enable.</span></div>
+  <div id="bl-list"></div>
+</div>
+
+    </div>
+  </main>
+</div>
+
 <div class="detail" id="detail-panel">
   <button class="detail-close" onclick="closeDetail()">×</button>
   <div id="detail-content"></div>
 </div>
 
+<div class="modal-backdrop" id="modal"><div class="modal" id="modal-content"></div></div>
+<div class="toast" id="toast"></div>
+
 <script>
-// ═══════════════════════════════════════
-// DATA: ARTIFACT REFERENCE
-// ═══════════════════════════════════════
-var ARTIFACTS = [
-  {id:'github_copilot',cat:'IDE Plugin',name:'GitHub Copilot',sev:'crit',
-   match:[/copilot/i,/github\.copilot/i],
-   paths:{win:['%APPDATA%\\Code\\User\\globalStorage\\github.copilot','%APPDATA%\\Code\\User\\globalStorage\\github.copilot-chat','%APPDATA%\\Code\\logs\\*\\exthost*\\GitHub.copilot*','%LOCALAPPDATA%\\github-copilot'],
-          mac:['~/Library/Application Support/Code/User/globalStorage/github.copilot','~/Library/Application Support/Code/User/globalStorage/github.copilot-chat','~/Library/Application Support/Code/logs/*/exthost*/GitHub.copilot*','~/.config/github-copilot'],
-          lin:['~/.config/Code/User/globalStorage/github.copilot','~/.config/Code/User/globalStorage/github.copilot-chat','~/.config/Code/logs/*/exthost*/GitHub.copilot*']},
-   files:'state.vscdb (SQLite) · *.log telemetry · hosts.json',
-   parse:'state.vscdb is a SQLite database. Query: SELECT key, value FROM ItemTable WHERE key LIKE "%copilot%". Values often contain base64-encoded JSON with chat history and file context sent to the model.',
-   value:'Suggestion history, chat conversations, file context that was sent to the model on each request.'},
-  {id:'cursor',cat:'IDE Plugin',name:'Cursor',sev:'crit',
-   match:[/cursor/i,/Cursor\/User/],
-   paths:{win:['%APPDATA%\\Cursor\\User\\globalStorage','%APPDATA%\\Cursor\\User\\workspaceStorage','%APPDATA%\\Cursor\\logs'],
-          mac:['~/Library/Application Support/Cursor/User/globalStorage','~/Library/Application Support/Cursor/User/workspaceStorage','~/Library/Application Support/Cursor/logs'],
-          lin:['~/.config/Cursor/User/globalStorage','~/.config/Cursor/User/workspaceStorage','~/.config/Cursor/logs']},
+// ═══ AUTH + STORAGE ═══
+var STORAGE_KEY = 'llm-dfir-v1';
+var SESSION_KEY = 'llm-dfir-session';
+
+function loadStorage() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"users":{},"cases":{}}') }
+  catch(e) { return {users:{},cases:{}} }
+}
+function saveStorage(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)) }
+  catch(e) { toast('Storage full', 'crit') }
+}
+
+async function hashPassword(password, salt) {
+  var encoder = new TextEncoder();
+  var data = encoder.encode(password + ':' + salt);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer)).map(function(b) { return b.toString(16).padStart(2, '0') }).join('');
+}
+function genSalt() {
+  var arr = new Uint8Array(16);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(function(b) { return b.toString(16).padStart(2, '0') }).join('');
+}
+
+var SESSION = null;
+var AUTH_MODE = 'signin';
+var CURRENT_CASE_ID = null;
+
+function emptyState() { return {artifacts:[], iocs:[], timeline:[], imported:[]} }
+var STATE = emptyState();
+
+function showAuthError(msg) {
+  var el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show') }, 5000);
+}
+
+document.querySelectorAll('[data-auth-tab]').forEach(function(el) {
+  el.addEventListener('click', function() {
+    AUTH_MODE = this.dataset.authTab;
+    document.querySelectorAll('[data-auth-tab]').forEach(function(x) { x.classList.remove('on') });
+    this.classList.add('on');
+    document.getElementById('auth-btn').textContent = AUTH_MODE === 'signin' ? 'Sign In' : 'Create Account';
+  });
+});
+
+async function handleAuth(ev) {
+  ev.preventDefault();
+  var username = document.getElementById('auth-username').value.trim();
+  var password = document.getElementById('auth-password').value;
+  if (!username || password.length < 4) {
+    showAuthError('Username required, password minimum 4 characters');
+    return false;
+  }
+  if (username === 'demo') {
+    showAuthError('Use the Demo button to explore the demo account');
+    return false;
+  }
+  var data = loadStorage();
+  if (AUTH_MODE === 'register') {
+    if (data.users[username]) {
+      showAuthError('Username already exists');
+      return false;
+    }
+    var salt = genSalt();
+    var hash = await hashPassword(password, salt);
+    data.users[username] = {salt:salt, hash:hash, created:new Date().toISOString(), cases:[]};
+    saveStorage(data);
+    toast('Account created');
+    setTimeout(function() { completeLogin(username, false) }, 400);
+  } else {
+    var user = data.users[username];
+    if (!user) { showAuthError('Account not found'); return false; }
+    var hash = await hashPassword(password, user.salt);
+    if (hash !== user.hash) { showAuthError('Invalid password'); return false; }
+    completeLogin(username, false);
+  }
+  return false;
+}
+
+function loginDemo() { completeLogin('demo', true) }
+
+function completeLogin(username, isDemo) {
+  SESSION = {username:username, isDemo:isDemo, loginTime:new Date().toISOString()};
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(SESSION));
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  initAppForUser();
+}
+
+function logout() {
+  SESSION = null;
+  sessionStorage.removeItem(SESSION_KEY);
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('auth-username').value = '';
+  document.getElementById('auth-password').value = '';
+  CURRENT_CASE_ID = null;
+  STATE = emptyState();
+}
+
+function restoreSession() {
+  try {
+    var s = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
+    if (s && s.username) {
+      SESSION = s;
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app').classList.add('active');
+      initAppForUser();
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+// ═══ CASE MANAGEMENT ═══
+function getUserCases() {
+  var data = loadStorage();
+  var user = data.users[SESSION.username];
+  if (!user) return [];
+  return (user.cases || []).map(function(id) { return data.cases[id] }).filter(Boolean);
+}
+
+function createCase(name, seedData) {
+  var data = loadStorage();
+  var id = 'case_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  var now = new Date().toISOString();
+  data.cases[id] = {id:id, name:name, owner:SESSION.username, created:now, modified:now, state:seedData||emptyState()};
+  if (!data.users[SESSION.username]) data.users[SESSION.username] = {created:now, cases:[]};
+  data.users[SESSION.username].cases.push(id);
+  saveStorage(data);
+  return id;
+}
+
+function loadCase(id) {
+  var data = loadStorage();
+  var c = data.cases[id];
+  if (!c) return false;
+  CURRENT_CASE_ID = id;
+  STATE = c.state || emptyState();
+  STATE.artifacts = STATE.artifacts || [];
+  STATE.iocs = STATE.iocs || [];
+  STATE.timeline = STATE.timeline || [];
+  STATE.imported = STATE.imported || [];
+  renderAll();
+  return true;
+}
+
+function saveCurrentCase() {
+  if (!CURRENT_CASE_ID) return;
+  var data = loadStorage();
+  if (!data.cases[CURRENT_CASE_ID]) return;
+  data.cases[CURRENT_CASE_ID].state = STATE;
+  data.cases[CURRENT_CASE_ID].modified = new Date().toISOString();
+  saveStorage(data);
+}
+
+function renameCurrentCase(ev) {
+  if (ev) ev.stopPropagation();
+  closeCaseDropdown();
+  if (!CURRENT_CASE_ID) return;
+  if (SESSION.isDemo) { toast('Cannot rename demo case', 'crit'); return; }
+  var data = loadStorage();
+  var c = data.cases[CURRENT_CASE_ID];
+  if (!c) return;
+  openModal('<h3>Rename Case</h3><label class="input-label">Case Name</label><input class="input" id="modal-input" value="' + c.name.replace(/"/g,'&quot;') + '"><div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="confirmRename()">Rename</button></div>');
+  setTimeout(function() { document.getElementById('modal-input').focus() }, 100);
+}
+
+function confirmRename() {
+  var name = document.getElementById('modal-input').value.trim();
+  if (!name) return;
+  var data = loadStorage();
+  if (data.cases[CURRENT_CASE_ID]) {
+    data.cases[CURRENT_CASE_ID].name = name;
+    data.cases[CURRENT_CASE_ID].modified = new Date().toISOString();
+    saveStorage(data);
+    updateCaseSelector();
+    toast('Case renamed');
+  }
+  closeModal();
+}
+
+function deleteCurrentCase(ev) {
+  if (ev) ev.stopPropagation();
+  closeCaseDropdown();
+  if (!CURRENT_CASE_ID) return;
+  if (SESSION.isDemo) { toast('Cannot delete demo case', 'crit'); return; }
+  var cases = getUserCases();
+  if (cases.length <= 1) { toast('Cannot delete the last case', 'crit'); return; }
+  openModal('<h3>Delete Case?</h3><p style="font-size:.74rem;color:var(--tx2);line-height:1.6;margin-bottom:14px">This will permanently delete all artifacts, IOCs, and timeline events for this case. Cannot be undone.</p><div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn crit" onclick="confirmDelete()">Delete Case</button></div>');
+}
+
+function confirmDelete() {
+  var data = loadStorage();
+  delete data.cases[CURRENT_CASE_ID];
+  var user = data.users[SESSION.username];
+  if (user) user.cases = user.cases.filter(function(id) { return id !== CURRENT_CASE_ID });
+  saveStorage(data);
+  var remaining = getUserCases();
+  if (remaining.length) loadCase(remaining[0].id);
+  else { CURRENT_CASE_ID = null; STATE = emptyState(); var newId = createCase('New Case'); loadCase(newId); }
+  closeModal();
+  toast('Case deleted');
+}
+
+function openNewCaseModal(ev) {
+  if (ev) ev.stopPropagation();
+  closeCaseDropdown();
+  if (SESSION.isDemo) { toast('Demo account cannot create cases', 'crit'); return; }
+  openModal('<h3>New Case</h3><label class="input-label">Case Name</label><input class="input" id="modal-input" placeholder="e.g. Incident 2026-04-07"><div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="confirmNewCase()">Create</button></div>');
+  setTimeout(function() { document.getElementById('modal-input').focus() }, 100);
+}
+
+function confirmNewCase() {
+  var name = document.getElementById('modal-input').value.trim() || 'Untitled Case';
+  var id = createCase(name);
+  loadCase(id);
+  closeModal();
+  toast('Case created');
+}
+
+function toggleCaseDropdown(ev) {
+  ev.stopPropagation();
+  var dd = document.getElementById('case-dropdown');
+  var isOpen = dd.classList.contains('open');
+  closeCaseDropdown();
+  if (!isOpen) { renderCaseDropdown(); dd.classList.add('open'); }
+}
+function closeCaseDropdown() { document.getElementById('case-dropdown').classList.remove('open') }
+document.addEventListener('click', closeCaseDropdown);
+
+function renderCaseDropdown() {
+  var cases = getUserCases();
+  var html = cases.map(function(c) {
+    var isActive = c.id === CURRENT_CASE_ID;
+    var n = (c.state && c.state.artifacts) ? c.state.artifacts.length : 0;
+    return '<div class="case-dd-item' + (isActive?' active':'') + '" onclick="event.stopPropagation();loadCase(\'' + c.id + '\');closeCaseDropdown()"><div class="case-dd-name">' + c.name + '</div><div class="case-dd-meta">' + n + '</div></div>';
+  }).join('') || '<div style="padding:8px 10px;font-size:.65rem;color:var(--tx3)">No cases yet</div>';
+  document.getElementById('case-dd-list').innerHTML = html;
+}
+
+function updateCaseSelector() {
+  var data = loadStorage();
+  var c = data.cases[CURRENT_CASE_ID];
+  if (!c) {
+    document.getElementById('case-selector-name').textContent = 'No case';
+    document.getElementById('case-selector-meta').textContent = '—';
+    return;
+  }
+  document.getElementById('case-selector-name').textContent = c.name;
+  var modified = new Date(c.modified);
+  document.getElementById('case-selector-meta').textContent = (STATE.artifacts.length||0) + ' artifacts · ' + modified.toLocaleDateString();
+  document.getElementById('case-name-dd').textContent = c.name;
+  document.getElementById('case-created-dd').textContent = new Date(c.created).toLocaleString();
+  document.getElementById('case-modified-dd').textContent = new Date(c.modified).toLocaleString();
+  document.getElementById('case-files-dd').textContent = (STATE.imported||[]).length;
+  var cats = Array.from(new Set((STATE.artifacts||[]).map(function(a){return a.category}).filter(Boolean)));
+  document.getElementById('case-cats-dd').textContent = cats.length ? cats.join(' · ') : '—';
+}
+
+// ═══ INIT APP FOR USER ═══
+function initAppForUser() {
+  var data = loadStorage();
+  var u = SESSION.username;
+  document.getElementById('user-name').textContent = u === 'demo' ? 'Demo User' : u;
+  document.getElementById('user-role').textContent = SESSION.isDemo ? 'Read-only' : 'Analyst';
+  var avatar = document.getElementById('user-avatar');
+  avatar.textContent = u[0].toUpperCase();
+  avatar.className = 'user-avatar' + (SESSION.isDemo ? ' demo' : '');
+  document.getElementById('demo-badge').style.display = SESSION.isDemo ? 'inline-flex' : 'none';
+  var dz = document.getElementById('dropzone');
+  if (SESSION.isDemo) {
+    dz.classList.add('locked');
+    document.getElementById('dropzone-title').textContent = 'Import disabled in demo mode';
+    document.getElementById('demo-alert').style.display = 'flex';
+    document.getElementById('import-alert').style.display = 'none';
+  } else {
+    dz.classList.remove('locked');
+    document.getElementById('dropzone-title').textContent = 'Drop triage files here';
+    document.getElementById('demo-alert').style.display = 'none';
+    document.getElementById('import-alert').style.display = 'flex';
+  }
+
+  if (SESSION.isDemo) {
+    if (!data.users.demo) { data.users.demo = {created:new Date().toISOString(), cases:[]}; saveStorage(data); }
+    var demoCases = getUserCases();
+    // Refresh demo cases on each login
+    demoCases.forEach(function(c) { delete data.cases[c.id] });
+    data.users.demo.cases = [];
+    saveStorage(data);
+    var demoId = createCase('Operation Ghost MCP', buildDemoCase());
+    loadCase(demoId);
+  } else {
+    var cases = getUserCases();
+    if (!cases.length) { var id = createCase('Untitled Case'); loadCase(id); }
+    else loadCase(cases[0].id);
+  }
+}
+
+// ═══ DEMO CASE ═══
+function buildDemoCase() {
+  var now = Date.now();
+  var timeline = [
+    {timestamp:new Date(now-3600000).toISOString(), tool:'Claude Code', category:'IDE Plugin', path:'/Users/dev/.claude/sessions/session_2026-04-07_14:21:03.jsonl', size:487234, event:'file_modified'},
+    {timestamp:new Date(now-3500000).toISOString(), tool:'MCP Config', category:'MCP', path:'/Users/dev/Library/Application Support/Claude/claude_desktop_config.json', size:1247, event:'file_modified'},
+    {timestamp:new Date(now-3400000).toISOString(), tool:'MCP Server', category:'MCP', path:'/Users/dev/Library/Logs/Claude/mcp-server-filesystem.log', size:23456, event:'file_modified'},
+    {timestamp:new Date(now-3300000).toISOString(), tool:'MCP Server', category:'MCP', path:'/Users/dev/Library/Logs/Claude/mcp-server-github.log', size:18234, event:'file_modified'},
+    {timestamp:new Date(now-3000000).toISOString(), tool:'GitHub Copilot', category:'IDE Plugin', path:'/Users/dev/Library/Application Support/Code/User/globalStorage/github.copilot/state.vscdb', size:1234567, event:'file_modified'},
+    {timestamp:new Date(now-2800000).toISOString(), tool:'Cursor', category:'IDE Plugin', path:'/Users/dev/Library/Application Support/Cursor/User/workspaceStorage/a3f1b2c4/state.vscdb', size:892345, event:'file_modified'},
+    {timestamp:new Date(now-2400000).toISOString(), tool:'ChromaDB', category:'Vector DB', path:'/Users/dev/.chroma/chroma.sqlite3', size:5234567, event:'file_modified'},
+    {timestamp:new Date(now-2000000).toISOString(), tool:'Ollama', category:'Local LLM', path:'/Users/dev/.ollama/logs/server.log', size:234567, event:'file_modified'},
+    {timestamp:new Date(now-1800000).toISOString(), tool:'Anthropic SDK', category:'API Client', path:'/Users/dev/.anthropic/cache.json', size:12345, event:'file_modified'},
+    {timestamp:new Date(now-1500000).toISOString(), tool:'Chrome AI', category:'Browser AI', path:'/Users/dev/Library/Application Support/Google/Chrome/Default/Local Storage/leveldb/000003.log', size:456789, event:'file_modified'},
+    {timestamp:new Date(now-1200000).toISOString(), tool:'Shell History', category:'Shell History', path:'/Users/dev/.zsh_history', size:23456, event:'file_modified'},
+    {timestamp:new Date(now-900000).toISOString(), tool:'LangChain', category:'Agent Framework', path:'/Users/dev/.cache/langchain/llm_cache.db', size:67890, event:'file_modified'},
+    {timestamp:new Date(now-600000).toISOString(), tool:'HuggingFace', category:'Model Cache', path:'/Users/dev/.cache/huggingface/token', size:89, event:'file_modified'},
+    {timestamp:new Date(now-500000).toISOString(), tool:'Claude Code', category:'IDE Plugin', path:'/Users/dev/.claude/sessions/session_2026-04-07_15:33:12.jsonl', size:128934, event:'file_modified'},
+    {timestamp:new Date(now-300000).toISOString(), tool:'FAISS', category:'Vector DB', path:'/Users/dev/.cache/faiss/workspace_index.pkl', size:3456789, event:'file_modified'}
+  ];
+  var artifacts = timeline.map(function(e, i) {
+    return {tool:e.tool, category:e.category, path:e.path, size:e.size, modified:e.timestamp, sha256:'e'+i.toString(16).padStart(2,'0')+Math.random().toString(36).substring(2,15)+Math.random().toString(36).substring(2,15)+Math.random().toString(36).substring(2,15)+Math.random().toString(36).substring(2,7)};
+  });
+  var iocs = [
+    {path:'/Users/dev/Library/Application Support/Claude/claude_desktop_config.json', tool:'MCP Config', findings:{api_keys:[{type:'OpenAI API Key', count:3, sample:'sk-proj-Abc123xyz789...', sev:'crit'}, {type:'Anthropic API Key', count:1, sample:'sk-ant-api03-Def456...', sev:'crit'}]}},
+    {path:'/Users/dev/Library/Logs/Claude/mcp-server-filesystem.log', tool:'MCP Server', findings:{exfil:[{type:'Sensitive keyword', count:12, sample:'password=supersecret123', sev:'high'}], injection:[{type:'Classic prompt injection', count:1, sample:'ignore previous instructions', sev:'crit'}]}},
+    {path:'/Users/dev/.chroma/chroma.sqlite3', tool:'ChromaDB', findings:{exfil:[{type:'Sensitive keyword', count:47, sample:'api_key', sev:'high'}, {type:'Credit card pattern', count:2, sample:'4532-****-****-1234', sev:'crit'}]}},
+    {path:'/Users/dev/.ollama/logs/server.log', tool:'Ollama', findings:{exfil:[{type:'Private key in content', count:1, sample:'-----BEGIN RSA PRIVATE KEY-----', sev:'crit'}]}},
+    {path:'/Users/dev/.zsh_history', tool:'Shell History', findings:{api_keys:[{type:'OpenAI API Key', count:1, sample:'sk-proj-XYZ789abc...', sev:'crit'}], exfil:[{type:'Sensitive keyword', count:8, sample:'export OPENAI_API_KEY=', sev:'high'}]}},
+    {path:'/Users/dev/.claude/sessions/session_2026-04-07_15:33:12.jsonl', tool:'Claude Code', findings:{injection:[{type:'Classic prompt injection', count:2, sample:'ignore all previous instructions', sev:'crit'}, {type:'Code execution via prompt', count:1, sample:'```bash\nrm -rf', sev:'crit'}]}},
+    {path:'/Users/dev/.anthropic/cache.json', tool:'Anthropic SDK', findings:{endpoints:[{type:'Anthropic API endpoint', count:23, sample:'api.anthropic.com', sev:'info'}]}}
+  ];
+  var imported = [
+    {name:'timeline.json', size:4823, time:new Date(now-120000).toISOString()},
+    {name:'iocs.json', size:2145, time:new Date(now-120000).toISOString()},
+    {name:'evidence_inventory.csv', size:3267, time:new Date(now-120000).toISOString()}
+  ];
+  return {artifacts:artifacts, iocs:iocs, timeline:timeline, imported:imported};
+}
+
+// ═══ ARTIFACT REFERENCE ═══
+var ARTIFACTS_REF = [
+  {id:'github_copilot',cat:'IDE Plugin',name:'GitHub Copilot',sev:'crit',match:[/copilot/i],
+   paths:{win:['%APPDATA%\\Code\\User\\globalStorage\\github.copilot','%APPDATA%\\Code\\User\\globalStorage\\github.copilot-chat'],mac:['~/Library/Application Support/Code/User/globalStorage/github.copilot','~/Library/Application Support/Code/User/globalStorage/github.copilot-chat'],lin:['~/.config/Code/User/globalStorage/github.copilot']},
+   files:'state.vscdb (SQLite) · *.log · hosts.json',
+   parse:'state.vscdb is SQLite. Query: SELECT key,value FROM ItemTable WHERE key LIKE "%copilot%". Values often contain JSON with chat history and file context.',
+   value:'Suggestion history, chat conversations, file context sent to the model.'},
+  {id:'cursor',cat:'IDE Plugin',name:'Cursor',sev:'crit',match:[/cursor/i,/Cursor\/User/],
+   paths:{win:['%APPDATA%\\Cursor\\User\\globalStorage','%APPDATA%\\Cursor\\User\\workspaceStorage'],mac:['~/Library/Application Support/Cursor/User/globalStorage','~/Library/Application Support/Cursor/User/workspaceStorage'],lin:['~/.config/Cursor/User/globalStorage']},
    files:'state.vscdb · workspaceStorage/*/state.vscdb',
-   parse:'Per-workspace SQLite databases keyed by directory hash. Each project has its own state.vscdb. Query each separately. Chat threads under composer.composerData keys.',
-   value:'Chat history, indexed codebase metadata, sent-file logs, the actual lines of code that were shared with the AI.'},
-  {id:'claude_code',cat:'IDE Plugin',name:'Claude Code',sev:'crit',
-   match:[/\.claude/,/claude_code/i,/Claude\/sessions/],
-   paths:{win:['%USERPROFILE%\\.claude','%APPDATA%\\Claude','%LOCALAPPDATA%\\claude-code'],
-          mac:['~/.claude','~/Library/Application Support/Claude','~/Library/Logs/Claude'],
-          lin:['~/.claude','~/.config/claude']},
-   files:'sessions/*.jsonl · history files · tool use traces',
-   parse:'JSONL format — each line is one turn in the agent loop. jq -c \'select(.type=="tool_use")\' session.jsonl. Tool use entries contain the tool name and full input arguments.',
-   value:'Every tool invocation, file read, file edit, bash command, web fetch executed by the agent. Append-only — perfect for timeline reconstruction.'},
-  {id:'codeium',cat:'IDE Plugin',name:'Codeium / Windsurf',sev:'high',
-   match:[/codeium/i,/windsurf/i],
-   paths:{win:['%USERPROFILE%\\.codeium','%APPDATA%\\Windsurf'],
-          mac:['~/.codeium','~/Library/Application Support/Windsurf'],
-          lin:['~/.codeium','~/.config/Windsurf']},
-   files:'language_server*.log · config.json · indexed_repos/',
-   parse:'language_server logs are plain text. Search for "prompt": in JSON payloads. Indexed repository list in config.json.',
-   value:'Code completions, indexed repos, telemetry payloads with code snippets.'},
-  {id:'mcp_config',cat:'MCP',name:'MCP Server Config (Claude Desktop)',sev:'crit',
-   match:[/claude_desktop_config/],
-   paths:{win:['%APPDATA%\\Claude\\claude_desktop_config.json'],
-          mac:['~/Library/Application Support/Claude/claude_desktop_config.json'],
-          lin:['~/.config/Claude/claude_desktop_config.json']},
+   parse:'Per-workspace SQLite databases keyed by directory hash. Chat threads under composer.composerData keys.',
+   value:'Chat history, indexed codebase metadata, sent-file logs.'},
+  {id:'claude_code',cat:'IDE Plugin',name:'Claude Code',sev:'crit',match:[/\.claude/,/claude_code/i],
+   paths:{win:['%USERPROFILE%\\.claude','%APPDATA%\\Claude'],mac:['~/.claude','~/Library/Application Support/Claude','~/Library/Logs/Claude'],lin:['~/.claude']},
+   files:'sessions/*.jsonl · history',
+   parse:'JSONL — each line is one turn. jq -c \'select(.type=="tool_use")\' for tool calls.',
+   value:'Every tool invocation, file read, bash command. Append-only timeline.'},
+  {id:'codeium',cat:'IDE Plugin',name:'Codeium / Windsurf',sev:'high',match:[/codeium/i,/windsurf/i],
+   paths:{win:['%USERPROFILE%\\.codeium','%APPDATA%\\Windsurf'],mac:['~/.codeium','~/Library/Application Support/Windsurf'],lin:['~/.codeium']},
+   files:'language_server*.log · config.json',
+   parse:'language_server logs are plain text. Search for "prompt": in JSON payloads.',
+   value:'Code completions, indexed repos, telemetry payloads.'},
+  {id:'mcp_config',cat:'MCP',name:'MCP Server Config',sev:'crit',match:[/claude_desktop_config/],
+   paths:{win:['%APPDATA%\\Claude\\claude_desktop_config.json'],mac:['~/Library/Application Support/Claude/claude_desktop_config.json'],lin:['~/.config/Claude/claude_desktop_config.json']},
    files:'claude_desktop_config.json',
-   parse:'JSON file declaring active MCP servers. Each entry has command, args, optional env. Inspect every server: where does the command come from? What does it have access to? Are credentials hardcoded?',
-   value:'⚠ FIRST FILE TO COLLECT in any LLM incident. Declares the agent\'s entire toolset. Red flags: filesystem servers rooted at $HOME or /, hardcoded API tokens in env, custom servers from /tmp.'},
-  {id:'mcp_logs',cat:'MCP',name:'MCP Server Logs',sev:'crit',
-   match:[/mcp-server.*\.log/,/Claude\/logs/],
-   paths:{win:['%APPDATA%\\Claude\\logs\\mcp-server-*.log'],
-          mac:['~/Library/Logs/Claude/mcp-server-*.log'],
-          lin:['~/.config/Claude/logs/mcp-server-*.log']},
-   files:'mcp-server-{servername}.log · main.log',
-   parse:'JSON-RPC traffic. Grep for "method":"tools/call" to enumerate every action. jq for tool names and arguments.',
-   value:'Every action the agent took on behalf of the model. Equivalent of process activity log for AI agent tool calls.'},
-  {id:'chrome_ai',cat:'Browser AI',name:'Chrome / Edge / Brave AI Storage',sev:'high',
-   match:[/Chrome.*Local Storage/,/Chrome.*IndexedDB/,/leveldb/],
-   paths:{win:['%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Local Storage\\leveldb','%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\IndexedDB'],
-          mac:['~/Library/Application Support/Google/Chrome/Default/Local Storage/leveldb','~/Library/Application Support/Google/Chrome/Default/IndexedDB'],
-          lin:['~/.config/google-chrome/Default/Local Storage/leveldb','~/.config/google-chrome/Default/IndexedDB']},
-   files:'*.ldb · *.log · IndexedDB blobs',
-   parse:'LevelDB format. Use python3 -m ccl_chromium_reader. Stores chat.openai.com, claude.ai, gemini.google.com session data.',
-   value:'Conversation IDs, cached message chunks, sometimes auth tokens. Browser-based AI assistant residue.'},
-  {id:'firefox_ai',cat:'Browser AI',name:'Firefox AI Storage',sev:'info',
-   match:[/firefox.*storage/i,/webappsstore/],
-   paths:{win:['%APPDATA%\\Mozilla\\Firefox\\Profiles\\*\\storage\\default'],
-          mac:['~/Library/Application Support/Firefox/Profiles/*/storage/default'],
-          lin:['~/.mozilla/firefox/*/storage/default']},
-   files:'*.sqlite · webappsstore.sqlite',
-   parse:'Firefox uses SQLite for both LocalStorage and IndexedDB. Query with any SQLite tool.',
-   value:'Browser-based AI assistant residue, cached conversations.'},
-  {id:'openai_sdk',cat:'API Client',name:'OpenAI SDK / CLI',sev:'high',
-   match:[/\.openai/,/openai.*cache/i],
-   paths:{win:['%USERPROFILE%\\.openai','%USERPROFILE%\\.cache\\openai'],
-          mac:['~/.openai','~/Library/Caches/openai'],
-          lin:['~/.openai','~/.cache/openai']},
-   files:'config · *.json · cached responses',
-   parse:'API key in env var or config. Custom client wrappers (LiteLLM, Helicone) often cache full request/response.',
-   value:'API keys, usage history, cached prompts and responses.'},
-  {id:'anthropic_sdk',cat:'API Client',name:'Anthropic SDK',sev:'high',
-   match:[/\.anthropic/,/anthropic.*cache/i],
-   paths:{win:['%USERPROFILE%\\.anthropic','%USERPROFILE%\\.cache\\anthropic'],
-          mac:['~/.anthropic','~/Library/Caches/anthropic'],
-          lin:['~/.anthropic','~/.cache/anthropic']},
+   parse:'JSON declaring active MCP servers. Check command, args, env for each server.',
+   value:'⚠ FIRST file to collect. Declares agent toolset. Red flags: home-rooted filesystem servers, hardcoded tokens, /tmp commands.'},
+  {id:'mcp_logs',cat:'MCP',name:'MCP Server Logs',sev:'crit',match:[/mcp-server.*\.log/],
+   paths:{win:['%APPDATA%\\Claude\\logs\\mcp-server-*.log'],mac:['~/Library/Logs/Claude/mcp-server-*.log'],lin:['~/.config/Claude/logs/mcp-server-*.log']},
+   files:'mcp-server-{name}.log',
+   parse:'JSON-RPC traffic. Grep for "method":"tools/call" to enumerate every agent action.',
+   value:'Every action the agent took. Process activity log equivalent for AI agents.'},
+  {id:'chrome_ai',cat:'Browser AI',name:'Chrome AI Storage',sev:'high',match:[/Chrome.*Local Storage/,/leveldb/],
+   paths:{win:['%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Local Storage\\leveldb'],mac:['~/Library/Application Support/Google/Chrome/Default/Local Storage/leveldb'],lin:['~/.config/google-chrome/Default/Local Storage/leveldb']},
+   files:'*.ldb · *.log',
+   parse:'LevelDB. Use ccl_chromium_reader. Stores chat.openai.com, claude.ai, gemini session data.',
+   value:'Conversation IDs, cached message chunks, auth tokens.'},
+  {id:'firefox_ai',cat:'Browser AI',name:'Firefox AI Storage',sev:'info',match:[/firefox.*storage/i],
+   paths:{win:['%APPDATA%\\Mozilla\\Firefox\\Profiles\\*\\storage\\default'],mac:['~/Library/Application Support/Firefox/Profiles/*/storage/default'],lin:['~/.mozilla/firefox/*/storage/default']},
+   files:'*.sqlite',
+   parse:'Firefox uses SQLite. Query with standard tools.',
+   value:'Browser AI cached conversations.'},
+  {id:'openai_sdk',cat:'API Client',name:'OpenAI SDK',sev:'high',match:[/\.openai/],
+   paths:{win:['%USERPROFILE%\\.openai','%USERPROFILE%\\.cache\\openai'],mac:['~/.openai','~/Library/Caches/openai'],lin:['~/.openai','~/.cache/openai']},
+   files:'config · *.json',
+   parse:'API key in env var or config. Check LiteLLM/Helicone wrappers for cached bodies.',
+   value:'API keys, cached prompts and responses.'},
+  {id:'anthropic_sdk',cat:'API Client',name:'Anthropic SDK',sev:'high',match:[/\.anthropic/],
+   paths:{win:['%USERPROFILE%\\.anthropic'],mac:['~/.anthropic','~/Library/Caches/anthropic'],lin:['~/.anthropic','~/.cache/anthropic']},
    files:'*.json · *.log',
-   parse:'API key in ANTHROPIC_API_KEY env var. SDK supports request logging via Python logging module.',
-   value:'Cached prompts/responses, API key storage.'},
-  {id:'chromadb',cat:'Vector DB',name:'ChromaDB',sev:'crit',
-   match:[/\.chroma/,/chroma\.sqlite/],
-   paths:{win:['%USERPROFILE%\\.chroma','%USERPROFILE%\\chroma'],
-          mac:['~/.chroma','~/chroma'],
-          lin:['~/.chroma','~/chroma','/var/lib/chroma']},
-   files:'chroma.sqlite3 · *.parquet · *.bin',
-   parse:'Open chroma.sqlite3 with sqlite3. Query: SELECT collection_id, document FROM embeddings_queue. Reveals indexed documents.',
-   value:'⚠ Often contains entire codebases, customer databases, or confidential documents indexed for RAG. Investigators routinely find sensitive data here.'},
-  {id:'faiss',cat:'Vector DB',name:'FAISS Index Files',sev:'high',
-   match:[/faiss/,/\.index$/],
-   paths:{win:['%USERPROFILE%\\.cache\\faiss','%TEMP%\\faiss*'],
-          mac:['~/.cache/faiss','/tmp/faiss*'],
-          lin:['~/.cache/faiss','/tmp/faiss*']},
+   parse:'API key in ANTHROPIC_API_KEY. SDK supports request logging.',
+   value:'Cached prompts/responses, API keys.'},
+  {id:'chromadb',cat:'Vector DB',name:'ChromaDB',sev:'crit',match:[/\.chroma/,/chroma\.sqlite/],
+   paths:{win:['%USERPROFILE%\\.chroma'],mac:['~/.chroma','~/chroma'],lin:['~/.chroma','/var/lib/chroma']},
+   files:'chroma.sqlite3 · *.parquet',
+   parse:'SELECT collection_id,document FROM embeddings_queue. Reveals indexed documents.',
+   value:'⚠ Often contains codebases, customer DBs, confidential docs indexed for RAG.'},
+  {id:'faiss',cat:'Vector DB',name:'FAISS Index',sev:'high',match:[/faiss/],
+   paths:{win:['%USERPROFILE%\\.cache\\faiss'],mac:['~/.cache/faiss','/tmp/faiss*'],lin:['~/.cache/faiss','/tmp/faiss*']},
    files:'*.faiss · *.index · *.pkl',
-   parse:'Binary index files. .pkl companion files contain original document text — pickled Python objects. Beware: untrusted unpickling executes code.',
-   value:'Local embedding indices, semantic search caches with original document text.'},
-  {id:'huggingface',cat:'Model Cache',name:'HuggingFace Cache',sev:'info',
-   match:[/huggingface/,/\.cache\/huggingface/],
-   paths:{win:['%USERPROFILE%\\.cache\\huggingface'],
-          mac:['~/.cache/huggingface','~/Library/Caches/huggingface'],
-          lin:['~/.cache/huggingface']},
-   files:'models--*/* · datasets--*/* · token',
-   parse:'models--{org}--{model}/snapshots/{commit}/. The "token" file contains the user\'s HuggingFace authentication token.',
-   value:'Downloaded model weights, tokenizers. Reveals which models the user has run locally.'},
-  {id:'langchain',cat:'Agent Framework',name:'LangChain',sev:'high',
-   match:[/langchain/i],
-   paths:{win:['%USERPROFILE%\\.cache\\langchain','%TEMP%\\langchain*'],
-          mac:['~/.cache/langchain','/tmp/langchain*'],
-          lin:['~/.cache/langchain','/tmp/langchain*']},
-   files:'*.db · *.pkl · *.json',
-   parse:'SQLite trace cache contains chain execution history. SELECT * FROM full_llm_cache. Pickled state files require careful handling.',
-   value:'Agent traces, tool invocations, complete chain execution history.'},
-  {id:'ollama',cat:'Local LLM',name:'Ollama',sev:'crit',
-   match:[/\.ollama/,/ollama/i],
-   paths:{win:['%USERPROFILE%\\.ollama','%LOCALAPPDATA%\\Ollama'],
-          mac:['~/.ollama','~/Library/Application Support/Ollama'],
-          lin:['~/.ollama','/usr/share/ollama']},
-   files:'logs/server.log · history · models/manifests/* · models/blobs/*',
-   parse:'~/.ollama/logs/server.log contains every prompt sent to the local model with timestamps. history is the CLI command history.',
-   value:'⚠ Ollama runs entirely offline. server.log is often the ONLY evidence of local LLM usage. Most monitoring tools do not watch this file.'},
-  {id:'shell_history',cat:'Shell History',name:'Shell History (LLM tool usage)',sev:'high',
-   match:[/bash_history/,/zsh_history/,/ConsoleHost_history/,/fish_history/],
-   paths:{win:['%APPDATA%\\Microsoft\\Windows\\PowerShell\\PSReadLine\\ConsoleHost_history.txt'],
-          mac:['~/.bash_history','~/.zsh_history','~/.local/share/fish/fish_history'],
-          lin:['~/.bash_history','~/.zsh_history','~/.local/share/fish/fish_history']},
-   files:'.bash_history · .zsh_history · ConsoleHost_history.txt',
-   parse:'Plain text. Grep for: openai, anthropic, claude, ollama, OPENAI_API_KEY, ANTHROPIC_API_KEY, api.openai.com, npx @modelcontextprotocol, litellm, langchain.',
-   value:'Often the first place where an API key leaks (export OPENAI_API_KEY=). Also valuable for finding the moment a malicious MCP server was installed via npm.'}
+   parse:'Binary. .pkl companions contain original document text.',
+   value:'Local embeddings with original document text.'},
+  {id:'huggingface',cat:'Model Cache',name:'HuggingFace Cache',sev:'info',match:[/huggingface/],
+   paths:{win:['%USERPROFILE%\\.cache\\huggingface'],mac:['~/.cache/huggingface'],lin:['~/.cache/huggingface']},
+   files:'models--*/* · token',
+   parse:'Directory pattern models--{org}--{model}. "token" file contains HF auth token.',
+   value:'Downloaded models, reveals what user runs locally.'},
+  {id:'langchain',cat:'Agent Framework',name:'LangChain',sev:'high',match:[/langchain/i],
+   paths:{win:['%USERPROFILE%\\.cache\\langchain'],mac:['~/.cache/langchain','/tmp/langchain*'],lin:['~/.cache/langchain']},
+   files:'*.db · *.pkl',
+   parse:'SQLite trace cache. SELECT * FROM full_llm_cache.',
+   value:'Agent traces, tool invocations, chain execution history.'},
+  {id:'ollama',cat:'Local LLM',name:'Ollama',sev:'crit',match:[/\.ollama/,/ollama/i],
+   paths:{win:['%USERPROFILE%\\.ollama'],mac:['~/.ollama','~/Library/Application Support/Ollama'],lin:['~/.ollama','/usr/share/ollama']},
+   files:'logs/server.log · history · models/',
+   parse:'~/.ollama/logs/server.log contains every prompt with timestamps.',
+   value:'⚠ Ollama runs offline. server.log is often the ONLY evidence of local LLM usage.'},
+  {id:'shell_history',cat:'Shell History',name:'Shell History',sev:'high',match:[/bash_history/,/zsh_history/,/ConsoleHost_history/],
+   paths:{win:['%APPDATA%\\Microsoft\\Windows\\PowerShell\\PSReadLine\\ConsoleHost_history.txt'],mac:['~/.bash_history','~/.zsh_history'],lin:['~/.bash_history','~/.zsh_history']},
+   files:'.bash_history · .zsh_history',
+   parse:'Grep for: OPENAI_API_KEY, ANTHROPIC_API_KEY, openai, anthropic, ollama, npx @modelcontextprotocol.',
+   value:'First place API keys leak. Shows when malicious MCP servers were installed.'}
 ];
 
 // ═══ IOC PATTERNS ═══
 var IOC_PATTERNS = {
-  api_keys: [
-    {re: /sk-[a-zA-Z0-9]{20,}/g, name: 'OpenAI API Key', sev: 'crit'},
-    {re: /sk-ant-[a-zA-Z0-9_\-]{20,}/g, name: 'Anthropic API Key', sev: 'crit'},
-    {re: /AIza[0-9A-Za-z\-_]{35}/g, name: 'Google API Key', sev: 'crit'},
-    {re: /pcsk_[a-zA-Z0-9_]{20,}/g, name: 'Pinecone API Key', sev: 'crit'},
-    {re: /hf_[a-zA-Z0-9]{30,}/g, name: 'HuggingFace Token', sev: 'crit'}
+  api_keys:[
+    {re:/sk-[a-zA-Z0-9]{20,}/g, name:'OpenAI API Key', sev:'crit'},
+    {re:/sk-ant-[a-zA-Z0-9_\-]{20,}/g, name:'Anthropic API Key', sev:'crit'},
+    {re:/AIza[0-9A-Za-z\-_]{35}/g, name:'Google API Key', sev:'crit'},
+    {re:/pcsk_[a-zA-Z0-9_]{20,}/g, name:'Pinecone API Key', sev:'crit'},
+    {re:/hf_[a-zA-Z0-9]{30,}/g, name:'HuggingFace Token', sev:'crit'}
   ],
-  endpoints: [
-    {re: /api\.openai\.com/gi, name: 'OpenAI API endpoint', sev: 'info'},
-    {re: /api\.anthropic\.com/gi, name: 'Anthropic API endpoint', sev: 'info'},
-    {re: /generativelanguage\.googleapis\.com/gi, name: 'Google Gemini API endpoint', sev: 'info'},
-    {re: /\.openai\.azure\.com/gi, name: 'Azure OpenAI endpoint', sev: 'info'},
-    {re: /api\.cohere\.ai/gi, name: 'Cohere API endpoint', sev: 'info'},
-    {re: /api\.mistral\.ai/gi, name: 'Mistral API endpoint', sev: 'info'}
+  endpoints:[
+    {re:/api\.openai\.com/gi, name:'OpenAI API endpoint', sev:'info'},
+    {re:/api\.anthropic\.com/gi, name:'Anthropic API endpoint', sev:'info'},
+    {re:/generativelanguage\.googleapis\.com/gi, name:'Google Gemini endpoint', sev:'info'},
+    {re:/\.openai\.azure\.com/gi, name:'Azure OpenAI endpoint', sev:'info'},
+    {re:/api\.cohere\.ai/gi, name:'Cohere API endpoint', sev:'info'},
+    {re:/api\.mistral\.ai/gi, name:'Mistral API endpoint', sev:'info'}
   ],
-  injection: [
-    {re: /ignore (previous|all) (instructions|prompts)/gi, name: 'Classic prompt injection', sev: 'crit'},
-    {re: /system:?\s*you are/gi, name: 'System prompt override attempt', sev: 'high'},
-    {re: /<\|im_start\|>/g, name: 'ChatML delimiter injection', sev: 'crit'},
-    {re: /DAN mode|jailbreak|developer mode/gi, name: 'Jailbreak attempt', sev: 'high'},
-    {re: /<script>|javascript:|data:text\/html/gi, name: 'XSS via prompt injection', sev: 'crit'},
-    {re: /```bash\s+rm -rf|curl.*\|\s*(bash|sh)/gi, name: 'Code execution via prompt', sev: 'crit'}
+  injection:[
+    {re:/ignore (previous|all) (instructions|prompts)/gi, name:'Classic prompt injection', sev:'crit'},
+    {re:/system:?\s*you are/gi, name:'System prompt override', sev:'high'},
+    {re:/<\|im_start\|>/g, name:'ChatML delimiter injection', sev:'crit'},
+    {re:/DAN mode|jailbreak|developer mode/gi, name:'Jailbreak attempt', sev:'high'},
+    {re:/<script>|javascript:|data:text\/html/gi, name:'XSS via prompt', sev:'crit'},
+    {re:/```bash\s+rm -rf|curl.*\|\s*(bash|sh)/gi, name:'Code exec via prompt', sev:'crit'}
   ],
-  exfil: [
-    {re: /(password|secret|token|api[_-]?key|credential)/gi, name: 'Sensitive keyword in content', sev: 'high'},
-    {re: /BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY/g, name: 'Private key in content', sev: 'crit'},
-    {re: /\b\d{3}-\d{2}-\d{4}\b/g, name: 'SSN pattern', sev: 'crit'},
-    {re: /\b4\d{3}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4}\b/g, name: 'Credit card pattern', sev: 'crit'}
+  exfil:[
+    {re:/(password|secret|token|api[_-]?key|credential)/gi, name:'Sensitive keyword', sev:'high'},
+    {re:/BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY/g, name:'Private key', sev:'crit'},
+    {re:/\b\d{3}-\d{2}-\d{4}\b/g, name:'SSN pattern', sev:'crit'},
+    {re:/\b4\d{3}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4}\b/g, name:'Credit card pattern', sev:'crit'}
   ]
 };
 
-// ═══ STATE ═══
-var STATE = {
-  artifacts: [],
-  iocs: [],
-  timeline: [],
-  imported: [],
-  selectedArtifact: null
-};
+// ═══ PLAYBOOKS + BASELINE DATA ═══
+var PLAYBOOKS_DATA = [
+  {n:1, title:'Prompt Injection (Direct & Indirect)', sev:'crit',
+   indicators:['Phrase "ignore previous instructions" in MCP transcripts','ChatML delimiter injection (<|im_start|>)','Hidden text in PDFs (white-on-white, 0pt)','Unicode tag characters (U+E0000–U+E007F)','Sudden agent behavior change mid-session','HTML comment instructions in indexed documents'],
+   triage:['Snapshot claude_desktop_config.json first','Snapshot ~/.claude/sessions/','Snapshot all MCP server logs','Run llm_triage.py for full collection','Search for known injection patterns','Determine MCP tool blast radius','Check for lateral effects'],
+   contain:['Disable affected MCP server','Revoke API tokens in scope','Quarantine source document','Reset agent session','Rotate credentials agent had access to']},
+  {n:2, title:'Sensitive Data Leakage to Third-Party Models', sev:'high',
+   indicators:['Outbound TLS to LLM API endpoints','Large request bodies','API keys in browser chat history','Customer PII in Copilot logs','BEGIN PRIVATE KEY in IDE databases','SSN/CC in workspace storage'],
+   triage:['Run llm_triage.py with content scanning','Review iocs.json','Sort timeline by tool','Parse browser LevelDB','Match paths to user accounts','Cross-reference SSO logs'],
+   contain:['Rotate credentials within 30 minutes','Notify legal/privacy','Submit deletion requests','Quarantine workstation','Force-rotate IDE tokens']},
+  {n:3, title:'Supply-Chain Compromise via AI Code', sev:'high',
+   indicators:['Recently added low-download packages','Typosquatted names (slopsquatting)','New MCP servers from unknown publishers','Outbound from CI/CD','AI-authored commit signatures','Obfuscation in AI suggestions'],
+   triage:['git log --grep="Copilot|Claude"','Diff recent dependency changes','Verify MCP server publishers','Run semgrep on AI code','Check for injection patterns','Audit MCP install commands'],
+   contain:['Roll back dependencies','Rebuild from clean state','Audit production','Rotate build secrets','Disable compromised MCP servers']}
+];
+
+var BASELINE_DATA = [
+  {n:1, title:'Network: LLM API Endpoints', detail:'Log all TLS connections to api.openai.com, api.anthropic.com, *.openai.azure.com, generativelanguage.googleapis.com, api.mistral.ai, api.cohere.ai. Capture SNI at minimum.', tags:['Suricata','Zeek']},
+  {n:2, title:'Network: Inference Hosts', detail:'Log connections to huggingface.co, replicate.com, together.ai, fireworks.ai, modal.com.', tags:['DNS','Firewall']},
+  {n:3, title:'Process: LLM Tool Names', detail:'Alert on processes named claude, cursor, ollama, copilot*, codeium*, windsurf*. Also node/npx running @modelcontextprotocol/* packages.', tags:['Sysmon','auditd']},
+  {n:4, title:'File: MCP Configuration Changes', detail:'Watch for modifications to claude_desktop_config.json. Treat like /etc/sudoers.', tags:['Sysmon','auditd']},
+  {n:5, title:'File: AI Tool State Directories', detail:'Watch for creation of files in ~/.claude/, ~/.cursor/, ~/.codeium/, ~/.ollama/, ~/.openai/, ~/.anthropic/.', tags:['Sysmon','auditd','osquery']},
+  {n:6, title:'Process: Command Line Indicators', detail:'Alert on --api-key, OPENAI_API_KEY=, ANTHROPIC_API_KEY=, npx @modelcontextprotocol, ollama run, langchain, litellm.', tags:['Sysmon','auditd']},
+  {n:7, title:'DNS: AI Service Lookups', detail:'Log DNS queries for openai.com, anthropic.com, claude.ai, chatgpt.com, gemini.google.com, huggingface.co.', tags:['DNS','Splunk']}
+];
 
 // ═══ NAVIGATION ═══
 document.querySelectorAll('.nav-item').forEach(function(item) {
@@ -1054,19 +1022,19 @@ document.querySelectorAll('.nav-item').forEach(function(item) {
     this.classList.add('active');
     document.getElementById('view-' + view).classList.add('active');
     var titles = {
-      dashboard: ['Dashboard', 'Overview of current case evidence'],
-      import: ['Import Evidence', 'Load triage output files for review'],
-      artifacts: ['Artifacts', 'All collected evidence files'],
-      iocs: ['Indicators of Compromise', 'Detected IOC patterns in collected files'],
-      timeline: ['Forensic Timeline', 'Event chronology sorted by mtime'],
-      generator: ['Command Builder', 'Generate triage commands for target hosts'],
-      lookup: ['Path Lookup', 'Identify which artifact a file path belongs to'],
-      scanner: ['IOC Scanner', 'Test content against detection patterns'],
-      reference: ['Artifact Reference', '15 LLM artifact types across Win/macOS/Linux'],
-      playbooks: ['Incident Response Playbooks', 'Procedures for common LLM incidents'],
-      baseline: ['Logging Baseline', 'Minimum monitoring controls every org should enable']
+      dashboard:['Dashboard','Overview of current case evidence'],
+      import:['Import Evidence','Load triage output files for review'],
+      artifacts:['Artifacts','All collected evidence files'],
+      iocs:['Indicators of Compromise','Detected IOC patterns'],
+      timeline:['Forensic Timeline','Event chronology sorted by mtime'],
+      generator:['Command Builder','Generate triage commands'],
+      lookup:['Path Lookup','Identify artifact from file path'],
+      scanner:['IOC Scanner','Test content against detection patterns'],
+      reference:['Artifact Reference','15 LLM artifact types'],
+      playbooks:['Playbooks','IR procedures for LLM incidents'],
+      baseline:['Logging Baseline','Minimum monitoring controls']
     };
-    var t = titles[view] || ['', ''];
+    var t = titles[view] || ['',''];
     document.getElementById('topbar-title').textContent = t[0];
     document.getElementById('topbar-sub').textContent = t[1];
     if (view === 'reference') renderReference();
@@ -1080,19 +1048,28 @@ document.querySelectorAll('.nav-item').forEach(function(item) {
 var dropzone = document.getElementById('dropzone');
 var fileInput = document.getElementById('file-input');
 
-['dragenter', 'dragover'].forEach(function(ev) {
-  dropzone.addEventListener(ev, function(e) { e.preventDefault(); dropzone.classList.add('over') });
+function handleDropzoneClick() {
+  if (SESSION && SESSION.isDemo) { toast('Import disabled in demo mode', 'crit'); return; }
+  fileInput.click();
+}
+['dragenter','dragover'].forEach(function(ev) {
+  dropzone.addEventListener(ev, function(e) {
+    e.preventDefault();
+    if (SESSION && !SESSION.isDemo) dropzone.classList.add('over');
+  });
 });
-['dragleave', 'drop'].forEach(function(ev) {
+['dragleave','drop'].forEach(function(ev) {
   dropzone.addEventListener(ev, function(e) { e.preventDefault(); dropzone.classList.remove('over') });
 });
 dropzone.addEventListener('drop', function(e) {
   e.preventDefault();
+  if (SESSION && SESSION.isDemo) { toast('Import disabled in demo mode', 'crit'); return; }
   handleFiles(e.dataTransfer.files);
 });
 fileInput.addEventListener('change', function(e) { handleFiles(e.target.files) });
 
 function handleFiles(files) {
+  var loaded = 0;
   Array.from(files).forEach(function(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
@@ -1103,11 +1080,13 @@ function handleFiles(files) {
         } else if (file.name.endsWith('.csv')) {
           processCSV(file.name, e.target.result);
         }
-        STATE.imported.push({name: file.name, size: file.size, time: new Date().toISOString()});
-        renderImported();
-        updateStats();
+        STATE.imported.push({name:file.name, size:file.size, time:new Date().toISOString()});
+        loaded++;
+        saveCurrentCase();
+        renderAll();
+        if (loaded === files.length) toast('Imported ' + loaded + ' file(s)');
       } catch (err) {
-        alert('Failed to parse ' + file.name + ': ' + err.message);
+        toast('Failed to parse ' + file.name, 'crit');
       }
     };
     reader.readAsText(file);
@@ -1118,7 +1097,7 @@ function processJSON(filename, data) {
   if (filename.indexOf('timeline') > -1 || data.timeline) {
     STATE.timeline = data.timeline || [];
     STATE.artifacts = STATE.timeline.map(function(e) {
-      return {tool: e.tool, category: e.category, path: e.path, size: e.size || 0, modified: e.timestamp};
+      return {tool:e.tool, category:e.category, path:e.path, size:e.size||0, modified:e.timestamp};
     });
   }
   if (filename.indexOf('ioc') > -1 || data.findings) {
@@ -1129,90 +1108,67 @@ function processJSON(filename, data) {
 function processCSV(filename, text) {
   var lines = text.split('\n').filter(function(l) { return l.trim() });
   if (lines.length < 2) return;
-  var headers = lines[0].split(',');
+  var headers = lines[0].split(',').map(function(h) { return h.trim() });
   var rows = lines.slice(1).map(function(line) {
     var vals = line.split(',');
     var obj = {};
-    headers.forEach(function(h, i) { obj[h.trim()] = vals[i] ? vals[i].replace(/^"|"$/g, '') : '' });
+    headers.forEach(function(h, i) { obj[h] = vals[i] ? vals[i].replace(/^"|"$/g,'') : '' });
     return obj;
   });
   if (filename.indexOf('inventory') > -1) {
     STATE.artifacts = rows.map(function(r) {
-      return {tool: r.tool, category: r.category, path: r.path, size: parseInt(r.size_bytes) || 0, modified: r.modified, sha256: r.sha256};
+      return {tool:r.tool, category:r.category, path:r.path, size:parseInt(r.size_bytes)||0, modified:r.modified, sha256:r.sha256};
     });
   }
 }
 
-function renderImported() {
-  var el = document.getElementById('imported-list');
-  if (!STATE.imported.length) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">📂</div>No files imported yet</div>';
-    return;
-  }
-  el.innerHTML = STATE.imported.map(function(f) {
-    return '<div style="padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.74rem;font-weight:600">' + f.name + '</div><div style="font-size:.6rem;color:var(--tx3);font-family:var(--m);margin-top:2px">' + (f.size/1024).toFixed(1) + ' KB · ' + new Date(f.time).toLocaleTimeString() + '</div></div><span class="badge b-acc">LOADED</span></div>';
-  }).join('');
+function confirmResetCase() {
+  if (!STATE.artifacts.length && !STATE.iocs.length) { toast('Case already empty'); return; }
+  if (SESSION.isDemo) { toast('Demo case cannot be cleared', 'crit'); return; }
+  openModal('<h3>Clear Case Evidence?</h3><p style="font-size:.74rem;color:var(--tx2);line-height:1.6;margin-bottom:14px">This removes all artifacts, IOCs, and timeline events. Case itself remains.</p><div class="modal-actions"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn crit" onclick="doResetCase()">Clear</button></div>');
 }
 
-// ═══ SAMPLE DATA ═══
-function loadSampleData() {
-  var now = Date.now();
-  STATE.timeline = [
-    {timestamp: new Date(now-3600000).toISOString(), tool: 'Claude Code', category: 'IDE Plugin', path: '/Users/dev/.claude/sessions/session_2026-04-07_14:21:03.jsonl', size: 487234, event: 'file_modified'},
-    {timestamp: new Date(now-3500000).toISOString(), tool: 'Model Context Protocol', category: 'MCP', path: '/Users/dev/Library/Application Support/Claude/claude_desktop_config.json', size: 1247, event: 'file_modified'},
-    {timestamp: new Date(now-3400000).toISOString(), tool: 'Model Context Protocol', category: 'MCP', path: '/Users/dev/Library/Logs/Claude/mcp-server-filesystem.log', size: 23456, event: 'file_modified'},
-    {timestamp: new Date(now-3300000).toISOString(), tool: 'Model Context Protocol', category: 'MCP', path: '/Users/dev/Library/Logs/Claude/mcp-server-github.log', size: 18234, event: 'file_modified'},
-    {timestamp: new Date(now-3000000).toISOString(), tool: 'GitHub Copilot', category: 'IDE Plugin', path: '/Users/dev/Library/Application Support/Code/User/globalStorage/github.copilot/state.vscdb', size: 1234567, event: 'file_modified'},
-    {timestamp: new Date(now-2800000).toISOString(), tool: 'Cursor', category: 'IDE Plugin', path: '/Users/dev/Library/Application Support/Cursor/User/workspaceStorage/a3f1b2c4d5e6f7a8/state.vscdb', size: 892345, event: 'file_modified'},
-    {timestamp: new Date(now-2400000).toISOString(), tool: 'ChromaDB', category: 'Vector DB', path: '/Users/dev/.chroma/chroma.sqlite3', size: 5234567, event: 'file_modified'},
-    {timestamp: new Date(now-2000000).toISOString(), tool: 'Ollama', category: 'Local LLM', path: '/Users/dev/.ollama/logs/server.log', size: 234567, event: 'file_modified'},
-    {timestamp: new Date(now-1800000).toISOString(), tool: 'Anthropic SDK', category: 'API Client', path: '/Users/dev/.anthropic/cache.json', size: 12345, event: 'file_modified'},
-    {timestamp: new Date(now-1500000).toISOString(), tool: 'Chrome AI', category: 'Browser AI', path: '/Users/dev/Library/Application Support/Google/Chrome/Default/Local Storage/leveldb/000003.log', size: 456789, event: 'file_modified'},
-    {timestamp: new Date(now-1200000).toISOString(), tool: 'Shell History', category: 'Shell History', path: '/Users/dev/.zsh_history', size: 23456, event: 'file_modified'},
-    {timestamp: new Date(now-900000).toISOString(), tool: 'LangChain', category: 'Agent Framework', path: '/Users/dev/.cache/langchain/llm_cache.db', size: 67890, event: 'file_modified'},
-    {timestamp: new Date(now-600000).toISOString(), tool: 'HuggingFace', category: 'Model Cache', path: '/Users/dev/.cache/huggingface/token', size: 89, event: 'file_modified'}
-  ];
-  STATE.artifacts = STATE.timeline.map(function(e) {
-    return {tool: e.tool, category: e.category, path: e.path, size: e.size, modified: e.timestamp, sha256: 'a' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)};
-  });
-  STATE.iocs = [
-    {path: '/Users/dev/Library/Application Support/Claude/claude_desktop_config.json', tool: 'MCP Server Config', findings: {api_keys: [{type: 'OpenAI API Key', count: 3, sample: 'sk-proj-Abc123...', sev: 'crit'}, {type: 'Anthropic API Key', count: 1, sample: 'sk-ant-api03-...', sev: 'crit'}]}},
-    {path: '/Users/dev/Library/Logs/Claude/mcp-server-filesystem.log', tool: 'MCP Server Log', findings: {exfil: [{type: 'Sensitive keyword in content', count: 12, sample: 'password', sev: 'high'}], injection: [{type: 'Classic prompt injection', count: 1, sample: 'ignore previous instructions', sev: 'crit'}]}},
-    {path: '/Users/dev/.chroma/chroma.sqlite3', tool: 'ChromaDB', findings: {exfil: [{type: 'Sensitive keyword in content', count: 47, sample: 'api_key', sev: 'high'}]}},
-    {path: '/Users/dev/.ollama/logs/server.log', tool: 'Ollama', findings: {exfil: [{type: 'Private key in content', count: 1, sample: 'BEGIN RSA PRIVATE KEY', sev: 'crit'}]}},
-    {path: '/Users/dev/.zsh_history', tool: 'Shell History', findings: {api_keys: [{type: 'OpenAI API Key', count: 1, sample: 'sk-proj-XYZ...', sev: 'crit'}], exfil: [{type: 'Sensitive keyword in content', count: 8, sample: 'export OPENAI_API_KEY', sev: 'high'}]}}
-  ];
-  STATE.imported.push({name: 'sample_case_timeline.json', size: 4321, time: new Date().toISOString()});
-  STATE.imported.push({name: 'sample_case_iocs.json', size: 1234, time: new Date().toISOString()});
-  renderImported();
-  updateStats();
-  alert('✓ Sample case loaded — ' + STATE.artifacts.length + ' artifacts, ' + STATE.iocs.length + ' IOC findings');
-}
-
-function resetCase() {
-  if (!confirm('Reset all loaded evidence? This cannot be undone.')) return;
-  STATE = {artifacts: [], iocs: [], timeline: [], imported: [], selectedArtifact: null};
-  renderImported();
-  updateStats();
+function doResetCase() {
+  STATE = emptyState();
+  saveCurrentCase();
+  renderAll();
+  closeModal();
+  toast('Case evidence cleared');
 }
 
 function exportCase() {
-  if (!STATE.artifacts.length) { alert('No evidence to export'); return; }
-  var data = {
-    exported: new Date().toISOString(),
-    summary: {artifacts: STATE.artifacts.length, iocs: STATE.iocs.length, timeline: STATE.timeline.length},
-    artifacts: STATE.artifacts,
-    iocs: STATE.iocs,
-    timeline: STATE.timeline
+  if (!STATE.artifacts.length && !STATE.iocs.length) { toast('No evidence to export', 'crit'); return; }
+  var data = loadStorage();
+  var c = data.cases[CURRENT_CASE_ID];
+  var exp = {
+    tool:'LLM-DFIR v1.0',
+    exported:new Date().toISOString(),
+    case:c?{name:c.name, created:c.created, modified:c.modified}:null,
+    summary:{artifacts:STATE.artifacts.length, iocs:STATE.iocs.length, timeline:STATE.timeline.length},
+    artifacts:STATE.artifacts,
+    iocs:STATE.iocs,
+    timeline:STATE.timeline
   };
-  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  var blob = new Blob([JSON.stringify(exp, null, 2)], {type:'application/json'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'llm-dfir-case-' + new Date().toISOString().slice(0,10) + '.json';
+  var safeName = (c?c.name:'case').replace(/[^a-z0-9]/gi,'_').toLowerCase();
+  a.download = 'llm-dfir-' + safeName + '-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
+  toast('Case exported');
 }
 
-// ═══ STATS UPDATE ═══
+// ═══ RENDER ═══
+function renderAll() {
+  updateStats();
+  renderImported();
+  renderArtifacts();
+  renderIOCs();
+  renderTimeline();
+  populateFilters();
+  updateCaseSelector();
+}
+
 function updateStats() {
   var critCount = 0;
   STATE.iocs.forEach(function(ioc) {
@@ -1230,34 +1186,37 @@ function updateStats() {
   document.getElementById('nav-art-ct').textContent = STATE.artifacts.length;
   document.getElementById('nav-ioc-ct').textContent = STATE.iocs.length;
   document.getElementById('nav-tl-ct').textContent = STATE.timeline.length;
-  
-  // Recent activity
-  var recent = STATE.timeline.slice(0, 5);
+  var recent = STATE.timeline.slice().sort(function(a,b) { return (b.timestamp||'').localeCompare(a.timestamp||'') }).slice(0,5);
   var ra = document.getElementById('recent-activity');
   if (recent.length) {
     ra.innerHTML = recent.map(function(e) {
       return '<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:.7rem"><div style="font-weight:600">' + e.tool + '</div><div style="font-family:var(--m);font-size:.58rem;color:var(--tx3);margin-top:2px;word-break:break-all">' + e.path + '</div></div>';
     }).join('');
+  } else {
+    ra.innerHTML = '<div class="empty"><div class="empty-icon">⏱</div>No activity yet</div>';
   }
-
-  renderArtifacts();
-  renderIOCs();
-  renderTimeline();
-  populateFilters();
 }
 
-// ═══ ARTIFACTS VIEW ═══
+function renderImported() {
+  var el = document.getElementById('imported-list');
+  if (!STATE.imported.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📂</div>No files imported yet</div>';
+    return;
+  }
+  el.innerHTML = STATE.imported.map(function(f) {
+    return '<div style="padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:.74rem;font-weight:600">' + f.name + '</div><div style="font-size:.6rem;color:var(--tx3);font-family:var(--m);margin-top:2px">' + (f.size/1024).toFixed(1) + ' KB · ' + new Date(f.time).toLocaleString() + '</div></div><span class="badge b-acc">LOADED</span></div>';
+  }).join('');
+}
+
 function renderArtifacts() {
   var search = (document.getElementById('art-search').value || '').toLowerCase();
   var cat = document.getElementById('art-cat-filter').value;
   var sort = document.getElementById('art-sort').value;
-  
   var list = STATE.artifacts.filter(function(a) {
     if (cat && a.category !== cat) return false;
     if (search && !((a.tool||'').toLowerCase().indexOf(search) > -1 || (a.path||'').toLowerCase().indexOf(search) > -1 || (a.category||'').toLowerCase().indexOf(search) > -1)) return false;
     return true;
   });
-  
   list.sort(function(a, b) {
     if (sort === 'modified-desc') return (b.modified||'').localeCompare(a.modified||'');
     if (sort === 'modified-asc') return (a.modified||'').localeCompare(b.modified||'');
@@ -1265,38 +1224,26 @@ function renderArtifacts() {
     if (sort === 'tool-asc') return (a.tool||'').localeCompare(b.tool||'');
     return 0;
   });
-  
   var body = document.getElementById('art-body');
   if (!list.length) {
-    body.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">◉</div>No artifacts loaded. Import evidence to begin.</div></td></tr>';
+    body.innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-icon">◉</div>No artifacts match filter</div></td></tr>';
     return;
   }
-  
-  body.innerHTML = list.map(function(a, i) {
-    return '<tr onclick="showArtifactDetail(' + STATE.artifacts.indexOf(a) + ')" style="cursor:pointer">' +
-      '<td><strong>' + (a.tool||'') + '</strong></td>' +
-      '<td><span class="badge b-info">' + (a.category||'') + '</span></td>' +
-      '<td class="mono">' + (a.path||'') + '</td>' +
-      '<td class="num">' + formatSize(a.size||0) + '</td>' +
-      '<td class="mono" style="font-size:.62rem">' + ((a.modified||'').slice(0,19).replace('T',' ')) + '</td>' +
-    '</tr>';
+  body.innerHTML = list.map(function(a) {
+    var origIdx = STATE.artifacts.indexOf(a);
+    return '<tr onclick="showArtifactDetail(' + origIdx + ')" style="cursor:pointer"><td><strong>' + (a.tool||'') + '</strong></td><td><span class="badge b-info">' + (a.category||'') + '</span></td><td class="mono">' + (a.path||'') + '</td><td class="num">' + formatSize(a.size||0) + '</td><td class="mono" style="font-size:.62rem">' + ((a.modified||'').slice(0,19).replace('T',' ')) + '</td></tr>';
   }).join('');
 }
-
 document.getElementById('art-search').addEventListener('input', renderArtifacts);
 document.getElementById('art-cat-filter').addEventListener('change', renderArtifacts);
 document.getElementById('art-sort').addEventListener('change', renderArtifacts);
 
 function populateFilters() {
-  var cats = [...new Set(STATE.artifacts.map(function(a) { return a.category }).filter(Boolean))].sort();
-  ['art-cat-filter', 'ref-cat'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    var current = el.value;
-    var first = '<option value="">All' + (id === 'ref-cat' ? ' Categories' : '') + '</option>';
-    el.innerHTML = first + cats.map(function(c) { return '<option value="' + c + '">' + c + '</option>' }).join('');
-    el.value = current;
-  });
+  var cats = Array.from(new Set(STATE.artifacts.map(function(a) { return a.category }).filter(Boolean))).sort();
+  var el = document.getElementById('art-cat-filter');
+  var current = el.value;
+  el.innerHTML = '<option value="">All</option>' + cats.map(function(c) { return '<option value="' + c + '">' + c + '</option>' }).join('');
+  el.value = current;
 }
 
 function formatSize(b) {
@@ -1306,40 +1253,29 @@ function formatSize(b) {
   return (b/1073741824).toFixed(2) + ' GB';
 }
 
-// ═══ IOC VIEW ═══
 function renderIOCs() {
   var sevFilter = document.querySelector('[data-sev].on') ? document.querySelector('[data-sev].on').dataset.sev : 'all';
   var typeFilter = document.querySelector('[data-iocat].on') ? document.querySelector('[data-iocat].on').dataset.iocat : 'all';
-  
   var rows = [];
   STATE.iocs.forEach(function(ioc) {
-    Object.entries(ioc.findings || {}).forEach(function([cat, items]) {
+    Object.keys(ioc.findings || {}).forEach(function(cat) {
+      var items = ioc.findings[cat];
       items.forEach(function(item) {
         if (sevFilter !== 'all' && item.sev !== sevFilter) return;
         if (typeFilter !== 'all' && cat !== typeFilter) return;
-        rows.push({path: ioc.path, tool: ioc.tool, category: cat, ...item});
+        rows.push(Object.assign({}, item, {path:ioc.path, tool:ioc.tool, category:cat}));
       });
     });
   });
-  
   var el = document.getElementById('ioc-list');
   if (!rows.length) {
     el.innerHTML = '<div class="empty"><div class="empty-icon">!</div>No IOCs match filter</div>';
     return;
   }
-  
   el.innerHTML = rows.map(function(r) {
-    return '<div class="ioc-row ' + r.sev + '">' +
-      '<div class="ioc-head">' +
-        '<div class="ioc-type">' + r.type + '</div>' +
-        '<div><span class="badge b-' + (r.sev === 'crit' ? 'crit' : r.sev === 'high' ? 'warn' : 'info') + '">' + r.sev.toUpperCase() + '</span> <span class="badge b-mute">' + r.count + 'x</span></div>' +
-      '</div>' +
-      '<div class="ioc-path">' + r.path + '</div>' +
-      (r.sample ? '<div class="ioc-sample">' + r.sample + '</div>' : '') +
-    '</div>';
+    return '<div class="ioc-row ' + r.sev + '"><div class="ioc-head"><div class="ioc-type">' + r.type + '</div><div><span class="badge b-' + (r.sev==='crit'?'crit':r.sev==='high'?'warn':'info') + '">' + r.sev.toUpperCase() + '</span> <span class="badge b-mute">' + r.count + 'x</span></div></div><div class="ioc-path">' + r.path + '</div>' + (r.sample ? '<div class="ioc-sample">' + escapeHtml(r.sample) + '</div>' : '') + '</div>';
   }).join('');
 }
-
 document.querySelectorAll('[data-sev],[data-iocat]').forEach(function(c) {
   c.addEventListener('click', function() {
     var attr = this.dataset.sev !== undefined ? 'sev' : 'iocat';
@@ -1349,141 +1285,99 @@ document.querySelectorAll('[data-sev],[data-iocat]').forEach(function(c) {
   });
 });
 
-// ═══ TIMELINE ═══
 function renderTimeline() {
   var el = document.getElementById('tl-list');
   if (!STATE.timeline.length) {
     el.innerHTML = '<div class="empty"><div class="empty-icon">⏱</div>No timeline events loaded</div>';
+    document.getElementById('tl-meta').textContent = 'No events loaded';
     return;
   }
   document.getElementById('tl-meta').textContent = STATE.timeline.length + ' events · sorted descending';
-  var sorted = [...STATE.timeline].sort(function(a, b) { return (b.timestamp||'').localeCompare(a.timestamp||'') });
+  var sorted = STATE.timeline.slice().sort(function(a,b) { return (b.timestamp||'').localeCompare(a.timestamp||'') });
   el.innerHTML = sorted.map(function(e) {
     var d = new Date(e.timestamp);
-    return '<div class="tl-row">' +
-      '<div class="tl-time">' + d.toLocaleString() + '</div>' +
-      '<div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div>' +
-      '<div class="tl-content">' +
-        '<div class="tl-title">' + (e.tool||'') + ' <span class="badge b-info">' + (e.category||'') + '</span></div>' +
-        '<div class="tl-detail">' + (e.path||'') + '</div>' +
-      '</div>' +
-    '</div>';
+    return '<div class="tl-row"><div class="tl-time">' + d.toLocaleString() + '</div><div class="tl-dot-col"><div class="tl-dot"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-title">' + (e.tool||'') + ' <span class="badge b-info">' + (e.category||'') + '</span></div><div class="tl-detail">' + (e.path||'') + '</div></div></div>';
   }).join('');
 }
 
-// ═══ COMMAND BUILDER ═══
 function rebuildCommand() {
-  var os = document.getElementById('gen-os').value;
   var out = document.getElementById('gen-out').value;
   var content = document.getElementById('opt-content').checked;
   var html = document.getElementById('opt-html').checked;
-  
   var cmd = '<button class="copy-btn" onclick="copyText(this)">copy</button>';
-  cmd += '<span class="cm-cm"># Run on the target host as the user being investigated</span>\n';
+  cmd += '<span class="cm-cm"># Run on the target host</span>\n';
   cmd += '<span class="pr">$</span> <span class="cm">git clone https://github.com/SiteQ8/LLM-DFIR.git</span>\n';
   cmd += '<span class="pr">$</span> <span class="cm">cd LLM-DFIR</span>\n';
   cmd += '<span class="pr">$</span> <span class="cm">python3 scripts/llm_triage.py</span>';
   cmd += ' <span class="key">--output ' + out + '</span>';
   if (!content) cmd += ' <span class="key">--no-content</span>';
-  cmd += '\n\n';
-  cmd += '<span class="cm-cm"># Output files generated:</span>\n';
+  cmd += '\n\n<span class="cm-cm"># Output files:</span>\n';
   cmd += '<span class="cm-cm">#   ' + out + '/timeline.json</span>\n';
   cmd += '<span class="cm-cm">#   ' + out + '/evidence_inventory.csv</span>\n';
   if (content) cmd += '<span class="cm-cm">#   ' + out + '/iocs.json</span>\n';
   if (html) cmd += '<span class="cm-cm">#   ' + out + '/report.html</span>\n';
-  cmd += '\n';
-  cmd += '<span class="cm-cm"># Then drop these files into the Import tab here</span>';
-  
+  cmd += '\n<span class="cm-cm"># Then drop these files into the Import tab</span>';
   document.getElementById('gen-output').innerHTML = cmd;
 }
 
-// ═══ PATH LOOKUP ═══
 function performLookup() {
   var path = document.getElementById('lookup-input').value.trim();
   var el = document.getElementById('lookup-result');
   if (!path) { el.innerHTML = ''; return; }
-  
-  var matches = ARTIFACTS.filter(function(a) {
-    return a.match.some(function(re) { return re.test(path) });
-  });
-  
+  var matches = ARTIFACTS_REF.filter(function(a) { return a.match.some(function(re) { return re.test(path) }) });
   if (!matches.length) {
-    el.innerHTML = '<div class="alert warn"><span>?</span><span>No known LLM artifact matches this path. This may be a legitimate file or a new artifact type not yet in the catalog.</span></div>';
+    el.innerHTML = '<div class="alert warn"><span>?</span><span>No known LLM artifact matches this path.</span></div>';
     return;
   }
-  
   el.innerHTML = matches.map(function(a) {
-    return '<div class="card" style="margin-bottom:10px"><div class="card-head"><div class="card-title">' + a.name + '</div><span class="badge b-' + (a.sev === 'crit' ? 'crit' : a.sev === 'high' ? 'warn' : 'info') + '">' + a.sev.toUpperCase() + '</span></div>' +
-      '<div class="card-sub" style="margin-bottom:10px">' + a.cat + '</div>' +
-      '<dl class="kv">' +
-        '<dt>Files of interest</dt><dd>' + a.files + '</dd>' +
-        '<dt>Parsing</dt><dd>' + a.parse + '</dd>' +
-        '<dt>Evidence value</dt><dd>' + a.value + '</dd>' +
-      '</dl></div>';
+    return '<div class="card" style="margin-bottom:10px"><div class="card-head"><div class="card-title">' + a.name + '</div><span class="badge b-' + (a.sev==='crit'?'crit':a.sev==='high'?'warn':'info') + '">' + a.sev.toUpperCase() + '</span></div><div class="card-sub" style="margin-bottom:10px">' + a.cat + '</div><dl class="kv"><dt>Files</dt><dd>' + a.files + '</dd><dt>Parsing</dt><dd>' + a.parse + '</dd><dt>Evidence value</dt><dd>' + a.value + '</dd></dl></div>';
   }).join('');
 }
 
-// ═══ IOC SCANNER ═══
 function performScan() {
   var content = document.getElementById('scanner-input').value;
   var el = document.getElementById('scanner-results');
   if (!content) { el.innerHTML = '<div class="card-sub">Results will appear here</div>'; return; }
-  
   var results = [];
-  Object.entries(IOC_PATTERNS).forEach(function([cat, patterns]) {
-    patterns.forEach(function(p) {
+  Object.keys(IOC_PATTERNS).forEach(function(cat) {
+    IOC_PATTERNS[cat].forEach(function(p) {
       var matches = content.match(p.re);
-      if (matches) results.push({cat: cat, name: p.name, sev: p.sev, count: matches.length, sample: matches[0]});
+      if (matches) results.push({cat:cat, name:p.name, sev:p.sev, count:matches.length, sample:matches[0]});
     });
   });
-  
   if (!results.length) {
-    el.innerHTML = '<div class="alert">✓ No IOC patterns detected in content</div>';
+    el.innerHTML = '<div class="alert">✓ No IOC patterns detected</div>';
     return;
   }
-  
   el.innerHTML = '<div style="font-size:.65rem;color:var(--tx3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;font-weight:700">' + results.length + ' findings</div>' + results.map(function(r) {
-    return '<div class="ioc-row ' + r.sev + '" style="margin-bottom:6px"><div class="ioc-head"><div class="ioc-type" style="font-size:.7rem">' + r.name + '</div><span class="badge b-' + (r.sev === 'crit' ? 'crit' : 'warn') + '">' + r.sev + '</span></div><div class="ioc-sample">' + (r.sample.length > 80 ? r.sample.slice(0, 80) + '...' : r.sample) + '</div></div>';
+    return '<div class="ioc-row ' + r.sev + '" style="margin-bottom:6px"><div class="ioc-head"><div class="ioc-type" style="font-size:.7rem">' + r.name + '</div><span class="badge b-' + (r.sev==='crit'?'crit':'warn') + '">' + r.sev + '</span></div><div class="ioc-sample">' + escapeHtml(r.sample.length > 80 ? r.sample.slice(0,80)+'...' : r.sample) + '</div></div>';
   }).join('');
 }
 
-// ═══ REFERENCE ═══
 function renderReference() {
   var search = (document.getElementById('ref-search').value || '').toLowerCase();
   var cat = document.getElementById('ref-cat').value;
-  
-  var list = ARTIFACTS.filter(function(a) {
+  var list = ARTIFACTS_REF.filter(function(a) {
     if (cat && a.cat !== cat) return false;
     if (search && !(a.name.toLowerCase().indexOf(search) > -1 || a.cat.toLowerCase().indexOf(search) > -1)) return false;
     return true;
   });
-  
-  // Populate cat filter
-  var cats = [...new Set(ARTIFACTS.map(function(a) { return a.cat }))].sort();
+  var cats = Array.from(new Set(ARTIFACTS_REF.map(function(a) { return a.cat }))).sort();
   var refCat = document.getElementById('ref-cat');
-  if (!refCat.options.length || refCat.options.length === 1) {
+  if (refCat.options.length <= 1) {
     refCat.innerHTML = '<option value="">All Categories</option>' + cats.map(function(c) { return '<option value="' + c + '">' + c + '</option>' }).join('');
   }
-  
   var el = document.getElementById('ref-list');
-  el.innerHTML = list.map(function(a, i) {
-    var paths = (a.paths.mac || []).slice(0, 1).concat((a.paths.lin || []).slice(0, 1));
-    return '<div class="card" onclick="showArtifactReference(\'' + a.id + '\')" style="cursor:pointer">' +
-      '<div class="card-head">' +
-        '<div class="card-title">' + a.name + ' <span class="badge b-info">' + a.cat + '</span></div>' +
-        '<span class="badge b-' + (a.sev === 'crit' ? 'crit' : a.sev === 'high' ? 'warn' : 'info') + '">' + a.sev.toUpperCase() + '</span>' +
-      '</div>' +
-      '<div style="font-size:.7rem;color:var(--tx2);line-height:1.6;margin-bottom:8px">' + a.value + '</div>' +
-      '<div style="font-family:var(--m);font-size:.6rem;color:var(--tx3);background:var(--bg);padding:8px;border-radius:4px;border:1px solid var(--border)">' + paths.join('<br>') + '</div>' +
-    '</div>';
+  el.innerHTML = list.map(function(a) {
+    var paths = (a.paths.mac || []).slice(0,1).concat((a.paths.lin || []).slice(0,1));
+    return '<div class="card" onclick="showArtifactReference(\'' + a.id + '\')" style="cursor:pointer"><div class="card-head"><div class="card-title">' + a.name + ' <span class="badge b-info">' + a.cat + '</span></div><span class="badge b-' + (a.sev==='crit'?'crit':a.sev==='high'?'warn':'info') + '">' + a.sev.toUpperCase() + '</span></div><div style="font-size:.7rem;color:var(--tx2);line-height:1.6;margin-bottom:8px">' + a.value + '</div><div style="font-family:var(--m);font-size:.6rem;color:var(--tx3);background:var(--bg);padding:8px;border-radius:4px;border:1px solid var(--border)">' + paths.join('<br>') + '</div></div>';
   }).join('');
 }
-
 document.getElementById('ref-search').addEventListener('input', renderReference);
 document.getElementById('ref-cat').addEventListener('change', renderReference);
 
 function showArtifactReference(id) {
-  var a = ARTIFACTS.find(function(x) { return x.id === id });
+  var a = ARTIFACTS_REF.find(function(x) { return x.id === id });
   if (!a) return;
   var html = '<h3>' + a.name + '</h3><div class="cat">' + a.cat + ' · ' + a.sev.toUpperCase() + '</div>';
   html += '<h4>Windows</h4>' + (a.paths.win || []).map(function(p) { return '<div class="path-line">' + p + '</div>' }).join('');
@@ -1500,86 +1394,40 @@ function showArtifactDetail(idx) {
   var a = STATE.artifacts[idx];
   if (!a) return;
   var html = '<h3>' + (a.tool || 'Artifact') + '</h3><div class="cat">' + (a.category || '') + '</div>';
-  html += '<h4>File Information</h4>';
-  html += '<dl class="kv">';
-  html += '<dt>Path</dt><dd style="font-family:var(--m);font-size:.66rem;word-break:break-all">' + (a.path || '') + '</dd>';
+  html += '<h4>File Information</h4><dl class="kv">';
+  html += '<dt>Path</dt><dd style="font-family:var(--m);font-size:.66rem">' + (a.path || '') + '</dd>';
   html += '<dt>Size</dt><dd>' + formatSize(a.size || 0) + '</dd>';
   html += '<dt>Modified</dt><dd style="font-family:var(--m);font-size:.66rem">' + (a.modified || '') + '</dd>';
-  if (a.sha256) html += '<dt>SHA-256</dt><dd style="font-family:var(--m);font-size:.6rem;word-break:break-all">' + a.sha256 + '</dd>';
+  if (a.sha256) html += '<dt>SHA-256</dt><dd style="font-family:var(--m);font-size:.58rem">' + a.sha256 + '</dd>';
   html += '</dl>';
-  
-  // Find matching reference
-  var ref = ARTIFACTS.find(function(r) { return r.match.some(function(re) { return re.test(a.path || '') }) });
+  var ref = ARTIFACTS_REF.find(function(r) { return r.match.some(function(re) { return re.test(a.path || '') }) });
   if (ref) {
-    html += '<h4>Forensic Context</h4><p style="margin-bottom:10px"><strong style="color:var(--acc)">' + ref.name + '</strong></p>';
-    html += '<p>' + ref.value + '</p>';
+    html += '<h4>Forensic Context</h4><p style="margin-bottom:10px"><strong style="color:var(--acc)">' + ref.name + '</strong></p><p>' + ref.value + '</p>';
     html += '<h4>Parsing Technique</h4><p>' + ref.parse + '</p>';
   }
-  
   document.getElementById('detail-content').innerHTML = html;
   document.getElementById('detail-panel').classList.add('open');
 }
 
-function closeDetail() {
-  document.getElementById('detail-panel').classList.remove('open');
-}
-
-// ═══ PLAYBOOKS ═══
-var PLAYBOOKS_DATA = [
-  {n: 1, title: 'Prompt Injection (Direct & Indirect)', sev: 'crit',
-   indicators: ['Phrase "ignore previous instructions" in MCP transcripts', 'ChatML delimiter injection (<|im_start|>)', 'Hidden text in PDFs or web pages (white-on-white, 0pt)', 'Unicode tag characters (U+E0000–U+E007F)', 'Sudden agent behavior change mid-session', 'HTML comment instructions in indexed documents'],
-   triage: ['Snapshot claude_desktop_config.json before doing anything', 'Snapshot ~/.claude/sessions/ before terminating processes', 'Snapshot all MCP server logs', 'Run llm_triage.py for full collection', 'Search for known injection patterns', 'Determine MCP tool blast radius', 'Check for lateral effects: file writes, command execution, API calls'],
-   contain: ['Disable affected MCP server in claude_desktop_config.json', 'Revoke API tokens that were in scope', 'Quarantine source document containing injection', 'Reset agent session by killing related processes', 'Rotate credentials the agent had read access to']},
-  {n: 2, title: 'Sensitive Data Leakage to Third-Party Models', sev: 'high',
-   indicators: ['Outbound TLS to api.openai.com / api.anthropic.com', 'Large request bodies to LLM API endpoints', 'API keys in browser-cached chat history', 'Customer PII in Copilot suggestion logs', 'BEGIN PRIVATE KEY in IDE plugin databases', 'SSN/CC patterns in workspace storage'],
-   triage: ['Run llm_triage.py with content scanning enabled', 'Review iocs.json for API keys, private keys, PII', 'Sort timeline by tool to attribute leakage', 'Parse browser LevelDB for cached conversations', 'Match artifact paths to user accounts', 'Cross-reference SSO logs for ChatGPT/Claude.ai sign-ins'],
-   contain: ['Rotate all credentials found within 30 minutes', 'Notify legal/privacy team if PII or regulated data', 'Submit data deletion requests to model provider', 'Quarantine workstation if leakage was systematic', 'Force-rotate tokens in IDE plugin storage']},
-  {n: 3, title: 'Supply-Chain Compromise via AI-Generated Code', sev: 'high',
-   indicators: ['Recently added packages with low download counts', 'Typosquatted package names (slopsquatting)', 'New MCP server entries from unknown publishers', 'Outbound from CI/CD agents to suspicious hosts', 'Large commits with AI tool signatures', 'Subtle obfuscation in AI-suggested files'],
-   triage: ['git log --grep="Generated by Copilot|Co-Authored-By: Claude"', 'Diff recent dependency changes', 'Verify each MCP server source: npm view <package> maintainers', 'Run semgrep on AI-generated code paths', 'Look for SQLi, command injection, hardcoded secrets', 'Audit npx @scope/mcp-server-* commands in shell history'],
-   contain: ['Roll back dependency changes to pre-incident state', 'Rebuild from clean state (wipe node_modules, venvs)', 'Audit production deployments for bad version', 'Rotate secrets accessible to build environment', 'Disable MCP servers from compromised sources']}
-];
+function closeDetail() { document.getElementById('detail-panel').classList.remove('open') }
 
 function renderPlaybooks() {
   document.getElementById('pb-list').innerHTML = PLAYBOOKS_DATA.map(function(pb) {
-    return '<div class="card">' +
-      '<div class="card-head">' +
-        '<div class="card-title">Playbook ' + pb.n + ': ' + pb.title + '</div>' +
-        '<span class="badge b-' + (pb.sev === 'crit' ? 'crit' : 'warn') + '">' + pb.sev.toUpperCase() + '</span>' +
-      '</div>' +
-      '<div class="split-3">' +
-        '<div><div class="card-sub" style="margin-bottom:8px;color:var(--crit)">⚠ INDICATORS</div>' + pb.indicators.map(function(i) { return '<div style="font-size:.7rem;color:var(--tx2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5">' + i + '</div>' }).join('') + '</div>' +
-        '<div><div class="card-sub" style="margin-bottom:8px;color:var(--info)">▸ TRIAGE STEPS</div>' + pb.triage.map(function(t, i) { return '<div style="font-size:.7rem;color:var(--tx2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5"><span style="color:var(--info);font-weight:700;font-family:var(--m);font-size:.6rem">' + (i+1).toString().padStart(2,'0') + '</span> &nbsp;' + t + '</div>' }).join('') + '</div>' +
-        '<div><div class="card-sub" style="margin-bottom:8px;color:var(--acc)">◈ CONTAINMENT</div>' + pb.contain.map(function(c) { return '<div style="font-size:.7rem;color:var(--tx2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5">' + c + '</div>' }).join('') + '</div>' +
-      '</div>' +
-    '</div>';
+    return '<div class="card"><div class="card-head"><div class="card-title">Playbook ' + pb.n + ': ' + pb.title + '</div><span class="badge b-' + (pb.sev==='crit'?'crit':'warn') + '">' + pb.sev.toUpperCase() + '</span></div><div class="split-3"><div><div class="card-sub" style="margin-bottom:8px;color:var(--crit)">⚠ INDICATORS</div>' + pb.indicators.map(function(i) { return '<div style="font-size:.7rem;color:var(--tx2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5">' + i + '</div>' }).join('') + '</div><div><div class="card-sub" style="margin-bottom:8px;color:var(--info)">▸ TRIAGE</div>' + pb.triage.map(function(t, i) { return '<div style="font-size:.7rem;color:var(--tx2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5"><span style="color:var(--info);font-weight:700;font-family:var(--m);font-size:.6rem">' + (i+1).toString().padStart(2,'0') + '</span> ' + t + '</div>' }).join('') + '</div><div><div class="card-sub" style="margin-bottom:8px;color:var(--acc)">◈ CONTAINMENT</div>' + pb.contain.map(function(c) { return '<div style="font-size:.7rem;color:var(--tx2);padding:5px 0;border-bottom:1px solid var(--border);line-height:1.5">' + c + '</div>' }).join('') + '</div></div></div>';
   }).join('');
 }
 
-// ═══ BASELINE ═══
-var BASELINE_DATA = [
-  {n: 1, title: 'Network: LLM API Endpoints', detail: 'Log all TLS connections to: api.openai.com, api.anthropic.com, *.openai.azure.com, generativelanguage.googleapis.com, api.mistral.ai, api.cohere.ai. Capture SNI at minimum.', tags: ['Suricata', 'Zeek', 'Palo Alto']},
-  {n: 2, title: 'Network: Inference Hosts', detail: 'Log connections to: huggingface.co, replicate.com, together.ai, fireworks.ai, modal.com, banana.dev. These are the supply chain for local LLM deployment.', tags: ['DNS', 'Firewall']},
-  {n: 3, title: 'Process: LLM Tool Names', detail: 'Alert on processes named: claude, cursor, ollama, copilot*, codeium*, windsurf*. Also alert on node/npx running @modelcontextprotocol/* packages.', tags: ['Sysmon', 'auditd', 'osquery']},
-  {n: 4, title: 'File: MCP Configuration Changes', detail: 'Watch for any modification to claude_desktop_config.json. Treat it like /etc/sudoers — it controls what tools an AI agent can access.', tags: ['Sysmon', 'auditd', 'fseventsd']},
-  {n: 5, title: 'File: AI Tool State Directories', detail: 'Watch for creation of files in ~/.claude/, ~/.cursor/, ~/.codeium/, ~/.ollama/, ~/.openai/, ~/.anthropic/. Take periodic snapshots for forensic baseline.', tags: ['Sysmon', 'auditd', 'osquery']},
-  {n: 6, title: 'Process: Command Line Indicators', detail: 'Alert on command lines with: --api-key, OPENAI_API_KEY=, ANTHROPIC_API_KEY=, npx @modelcontextprotocol, ollama run, langchain, litellm.', tags: ['Sysmon', 'auditd']},
-  {n: 7, title: 'DNS: AI Service Lookups', detail: 'Log DNS queries for: openai.com, anthropic.com, claude.ai, chatgpt.com, gemini.google.com, copilot.microsoft.com, perplexity.ai, mistral.ai, huggingface.co.', tags: ['DNS Server', 'Splunk']}
-];
-
 function renderBaseline() {
   document.getElementById('bl-list').innerHTML = BASELINE_DATA.map(function(b) {
-    return '<div class="card">' +
-      '<div class="card-head">' +
-        '<div class="card-title">' + b.n + '. ' + b.title + '</div>' +
-        '<div>' + b.tags.map(function(t) { return '<span class="badge b-mute" style="margin-left:4px">' + t + '</span>' }).join('') + '</div>' +
-      '</div>' +
-      '<div style="font-size:.74rem;color:var(--tx2);line-height:1.7">' + b.detail + '</div>' +
-    '</div>';
+    return '<div class="card"><div class="card-head"><div class="card-title">' + b.n + '. ' + b.title + '</div><div>' + b.tags.map(function(t) { return '<span class="badge b-mute" style="margin-left:4px">' + t + '</span>' }).join('') + '</div></div><div style="font-size:.74rem;color:var(--tx2);line-height:1.7">' + b.detail + '</div></div>';
   }).join('');
 }
 
 // ═══ UTILITIES ═══
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] });
+}
+
 function copyText(btn) {
   var text = btn.parentElement.innerText.replace('copy', '').trim();
   navigator.clipboard.writeText(text).then(function() {
@@ -1588,9 +1436,24 @@ function copyText(btn) {
   });
 }
 
+function openModal(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open') }
+document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal() });
+
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type === 'crit' ? ' crit' : '');
+  setTimeout(function() { t.classList.remove('show') }, 3000);
+}
+
 // ═══ INIT ═══
-updateStats();
-rebuildCommand();
+if (!restoreSession()) {
+  document.getElementById('auth-username').focus();
+}
 </script>
 </body>
 </html>
