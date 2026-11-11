@@ -19,8 +19,8 @@ Output: JSON timeline + CSV evidence inventory + HTML report
 Usage:
   python3 llm_triage.py [--output ./triage] [--no-content] [--json] [--html]
 
-Author: Ali AlEnezi (@SiteQ8) — NBK Group
-License: MIT — For authorized incident response only
+Author: Ali AlEnezi (@SiteQ8)
+License: MIT - For authorized incident response only
 """
 
 import os, sys, json, hashlib, platform, getpass, glob, csv, argparse, re
