@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔍 LLM-DFIR
+# LLM-DFIR
 
 ### AI Forensics Collection Toolkit
 
@@ -11,7 +11,7 @@
 
 **Web Tool:** [siteq8.github.io/LLM-DFIR](https://siteq8.github.io/LLM-DFIR)
 
-A working DFIR toolkit for collecting and analyzing forensic artifacts from LLM-based tools — Copilot, Cursor, Claude Code, MCP servers, browser AI assistants, vector databases, and local LLM runtimes.
+A working DFIR toolkit for collecting and analyzing forensic artifacts from LLM-based tools, Copilot, Cursor, Claude Code, MCP servers, browser AI assistants, vector databases, and local LLM runtimes.
 
 </div>
 
@@ -21,11 +21,11 @@ A working DFIR toolkit for collecting and analyzing forensic artifacts from LLM-
 
 A two-part toolkit:
 
-1. **`scripts/llm_triage.py`** — A Python collection script that walks 15 artifact paths across Windows, macOS, and Linux, hashes everything for chain of custody, scans content for IOCs, and produces timeline + inventory + IOC report files.
+1. **`scripts/llm_triage.py`**: A Python collection script that walks 15 artifact paths across Windows, macOS, and Linux, hashes everything for chain of custody, scans content for IOCs, and produces timeline + inventory + IOC report files.
 
-2. **Web tool (`docs/index.html`)** — An interactive analyst workbench. Drop the triage output files in and review them. Filter artifacts. Sort timelines. Triage IOCs. Generate collection commands. Look up paths. Test IOC patterns. Reference the artifact catalog.
+2. **Web tool (`docs/index.html`)**: An interactive analyst workbench. Drop the triage output files in and review them. Filter artifacts. Sort timelines. Triage IOCs. Generate collection commands. Look up paths. Test IOC patterns. Reference the artifact catalog.
 
-Everything runs locally. The web tool is a single static HTML file — no backend, no upload, no telemetry.
+Everything runs locally. The web tool is a single static HTML file, no backend, no upload, no telemetry.
 
 ---
 
@@ -49,21 +49,21 @@ open docs/index.html  # or just visit siteq8.github.io/LLM-DFIR
 ## Web Tool Features
 
 **Workspace**
-- **Dashboard** — Stats overview, quick start, recent activity
-- **Import Evidence** — Drag-drop triage output files for review (parsed entirely in browser)
-- **Artifacts** — Sortable, filterable, searchable artifact table with detail panel
-- **IOCs** — Severity and category filtered view of detected indicators
-- **Timeline** — Forensic timeline visualization sorted by mtime
+- **Dashboard**: Stats overview, quick start, recent activity
+- **Import Evidence**: Drag-drop triage output files for review (parsed entirely in browser)
+- **Artifacts**: Sortable, filterable, searchable artifact table with detail panel
+- **IOCs**: Severity and category filtered view of detected indicators
+- **Timeline**: Forensic timeline visualization sorted by mtime
 
 **Tools**
-- **Command Builder** — Generate ready-to-run triage commands for target hosts with options
-- **Path Lookup** — Paste any file path, identify which AI artifact category it belongs to
-- **IOC Scanner** — Paste content, run live IOC pattern detection
-- **Reference** — Browse all 15 artifact types with paths for each OS
+- **Command Builder**: Generate ready-to-run triage commands for target hosts with options
+- **Path Lookup**: Paste any file path, identify which AI artifact category it belongs to
+- **IOC Scanner**: Paste content, run live IOC pattern detection
+- **Reference**: Browse all 15 artifact types with paths for each OS
 
 **Operations**
-- **Playbooks** — IR playbooks for prompt injection, data leakage, supply-chain compromise
-- **Baseline** — 7-point minimum logging configuration
+- **Playbooks**: IR playbooks for prompt injection, data leakage, supply-chain compromise
+- **Baseline**: 7-point minimum logging configuration
 
 ---
 
@@ -80,10 +80,10 @@ python3 scripts/llm_triage.py --help
 ```
 
 **Outputs:**
-- `timeline.json` — Sorted forensic timeline (Plaso/Timesketch ready)
-- `evidence_inventory.csv` — Full artifact inventory with SHA-256 hashes
-- `iocs.json` — Files matching IOC patterns
-- `report.html` — Standalone HTML report
+- `timeline.json`: Sorted forensic timeline (Plaso/Timesketch ready)
+- `evidence_inventory.csv`: Full artifact inventory with SHA-256 hashes
+- `iocs.json`: Files matching IOC patterns
+- `report.html`: Standalone HTML report
 
 **IOC patterns detected:**
 - API keys (`sk-*`, `sk-ant-*`, `AIza*`, `pcsk_*`, `hf_*`)
